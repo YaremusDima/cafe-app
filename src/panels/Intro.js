@@ -11,7 +11,7 @@ import FixedLayout from '@vkontakte/vkui/dist/components/FixedLayout/FixedLayout
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
 
 
-const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go}) => {
+const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go, route}) => {
 	return (
         <Panel id={id} centered={true}>
             <PanelHeader>
@@ -28,7 +28,7 @@ const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go}) => {
                     </Group>
                     <FixedLayout vertical='bottom'>
                         <Div className='OkButton'>
-                            <Button mode='commerce' size='xl' onClick={go}>
+                            <Button mode='commerce' size='l' stretched style={{ marginRight: 8 }} onClick={() => go(route)}>
                                 OK, всё понятно!
                             </Button>
                         </Div>

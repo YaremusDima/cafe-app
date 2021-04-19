@@ -5,12 +5,17 @@
     justify-content: center;
     flex-direction: column;
 }
-.Persik {
+.Intro {
   display: block;
   width: 100%;
   max-width: 500px;
   margin: 20px auto;
 }
+
+.User .Cell__main {
+    padding-right: 0;
+}
+
 .OkButton {
     display: flex;
     align-items: center;
