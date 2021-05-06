@@ -14,43 +14,12 @@ import {PanelHeaderBack, Search, View} from "@vkontakte/vkui";
 
 function getRests() {
     return {
-        rest1: {prop1: '1', prop2: 'img', prop3: 'sdfsdf'},
+        123: {prop1: '1', prop2: 'img', prop3: 'sdfsdf'},
         rest2: {prop1: '21'},
         rest3: {prop1: '2144', prop2: 'i44mg2'},
         rest4: {prop1: null, prop2: '11i4f4mg2'},
         rest5: {prop1: '21as44', prop2: 'i44dffdmg2'},
     }
-}
-
-function ccc(text) {
-    let element = document.getElementById('rest')
-    let div1 = document.createElement('div')
-    div1.className = "Cell Cell--android"
-    let div2 = document.createElement('div')
-    div2.className = "Cell__in"
-    let div3 = document.createElement('div')
-    div3.role = "button"
-    div3.setAttribute('role', 'button')
-    div3.className = "Tappable Tappable--android SimpleCell SimpleCell--android SimpleCell--sizeY-regular Tappable--sizeX-compact Tappable--inactive"
-    let div4 = document.createElement('div')
-    div4.className = "SimpleCell__main"
-    let div5 = document.createElement('div')
-    div5.className = "SimpleCell__children"
-    div5.innerHTML = text;
-    let div6 = document.createElement('div')
-    div6.className = "SimpleCell__after"
-    let span1 = document.createElement('span')
-    span1.className = "SimpleCell__after"
-    let span2 = document.createElement('span')
-    span2.className = "Tappable__hoverShadow"
-    element.appendChild(div1)
-    div1.appendChild(div2)
-    div2.appendChild(div3)
-    div3.appendChild(div4)
-    div4.appendChild(div5)
-    div3.appendChild(div6)
-    div3.appendChild(span1)
-    div3.appendChild(span2)
 }
 
 function objectToArrayOfObjects(obj) {
@@ -81,18 +50,18 @@ function getProps(obj) {
 
 const Rests = ({id, go, fetchedUser, ROUTES}) => (
     <Panel id={id}>
-        <PanelHeader separator={false} left={<PanelHeaderBack onClick={() => go(ROUTES.HOME)}/>}>
-            Rests
-        </PanelHeader>
-        {fetchedUser &&
-        <Panel id={'rests'}>
-            <Group>
-                <Search/>
-                <Div id="rest">
-                    {printRests(getRests(), go)}
-                </Div>
-            </Group>
-        </Panel>}
+        <PanelHeader left={<PanelHeaderBack />}>Организации</PanelHeader>
+        <Group style={{ height: '1000px' }}>
+            {fetchedUser &&
+            <Panel id={'rests'}>
+                <Group>
+                    <Search/>
+                    <Div id="rest">
+                        {printRests(getRests(), go)}
+                    </Div>
+                </Group>
+            </Panel>}
+        </Group>
     </Panel>
 );
 
