@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+# cafe-app
+=======
 [<img width="134" src="https://vk.com/images/apps/mini_apps/vk_mini_apps_logo.svg">](https://vk.com/services)
 
 # Create VK Mini App [![npm][npm]][npm-url] [![deps][deps]][deps-url]
@@ -57,3 +60,4 @@ Go to created folder and run:
 
 [deps]: https://img.shields.io/david/vkcom/create-vk-mini-app.svg
 [deps-url]: https://david-dm.org/vkcom/create-vk-mini-app
+>>>>>>> 80b6f0e85e2d61e4a2bbe645b27b399a65a3d2f5
