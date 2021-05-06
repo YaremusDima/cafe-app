@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, Fragment} from 'react';
 import bridge from '@vkontakte/vk-bridge';
 import View from '@vkontakte/vkui/dist/components/View/View';
 import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner';
@@ -18,7 +18,7 @@ import Intro from './panels/Intro';
 import {
     Cell,
     Panel, PanelHeaderBack,
-    Placeholder,
+    Placeholder, Search,
     Snackbar,
     SplitCol,
     SplitLayout,
@@ -32,6 +32,7 @@ import Rests from "./panels/Rests";
 import {Epic} from "@vkontakte/vkui/dist/components/Epic/Epic";
 import PanelHeader from "@vkontakte/vkui/dist/components/PanelHeader/PanelHeader";
 import Group from "@vkontakte/vkui/dist/components/Group/Group";
+import Div from "@vkontakte/vkui/dist/components/Div/Div";
 
 const ROUTES = {
     RESTS: 'rests',
@@ -67,6 +68,7 @@ const App = () => {
     const [userHasSeenIntro, setUserHasSeenIntro] = useState(false);
     const [snackbar, setSnackbar] = useState(null);
     const [activeStory, setActiveStory] = React.useState('intro');
+    const [activePanel, setActivePanel] = React.useState("rests");
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
 
     useEffect(() => {
@@ -123,8 +125,13 @@ const App = () => {
         fetchData();
     }, []);
 
-    const go = panel => {
-        setActiveStory(panel);
+    const go = view => {
+        setActiveStory(view);
+        setActivePanel(view);
+    };
+
+    const goPanel = (panel) => {
+        setActivePanel(panel);
     };
 
     const viewIntro = async () => {
@@ -150,6 +157,55 @@ const App = () => {
         }
     }
 
+////////////////////////////////////////// Это функции для создания страниц организаций
+
+    function getRests() {
+        return {
+            123: {prop1: '1', prop2: 'img', prop3: 'sdfsdf'},
+            2456: {prop1: '21'},
+            1357: {prop1: '2144', prop2: 'i44mg2'},
+            44444: {prop1: null, prop2: '11i4f4mg2'},
+            342724: {prop1: '21as44', prop2: 'i44dffdmg2'},
+        }
+    }
+
+    function printRests(rests, go) {
+        let ans = []
+        for (let prop in rests) {
+            ans.push(
+                <Cell after={getProps(rests[prop])} onClick={() => go(prop)}>{prop}</Cell>
+            )
+            console.log(prop)
+        }
+        return ans;
+    }
+
+    function getProps(obj) {
+        let answer = Object.keys(obj).reduce(function (ans, item) {
+            let temp = '' + ans + item + ": " + obj[item] + ", ";
+            return temp
+        }, '')
+        return answer.substring(0, answer.length - 2);
+    }
+
+    function createRestsPanels(rests, go) {
+        let res = []
+        for (let rest in rests) {
+            res.push(
+                <Panel id={rest}>
+                    <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}>Организации</PanelHeader>
+                    <Group>
+                        <Div>
+                            Это страничка организаци под названием {rest}
+                        </Div>
+                    </Group>
+                </Panel>
+            )
+        }
+        console.log(res)
+        return res
+    }
+  ///////////////////////////////////////////
     const Example = withAdaptivity(({ viewWidth }) => {
         const platform = usePlatform();
         const isDesktop = viewWidth >= ViewWidth.TABLET;
@@ -253,8 +309,18 @@ const App = () => {
                         ><Icon28ClipOutline /></TabbarItem>
                     </Tabbar>
                     }>
-                        <View id="rests" activePanel="rests" popout={popout}>
-                            <Rests id={ROUTES.RESTS} fetchedUser={fetchedUser} go={go} ROUTES={ROUTES}/>
+                        <View id="rests" activePanel={activePanel} popout={popout}>
+                            <Panel id="rests">
+                                <PanelHeader left={<PanelHeaderBack/>}>Организации</PanelHeader>
+                                {fetchedUser &&
+                                <Group style={{height: '1000px'}}>
+                                    <Search/>
+                                    <Div id="rest">
+                                        {printRests(getRests(), goPanel)}
+                                    </Div>
+                                </Group>}
+                            </Panel>
+                            {createRestsPanels(getRests(), goPanel)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
