@@ -5,6 +5,7 @@ import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenS
 //import SnackBar from '@vkontakte/vkui/dist/components/SnackBar/SnackBar';
 import Avatar from '@vkontakte/vkui/dist/components/Avatar/Avatar';
 import {
+    Icon16Add, Icon16Minus,
     Icon24Error,
     Icon28ClipOutline,
     Icon28MessageOutline,
@@ -32,13 +33,16 @@ import {Epic} from "@vkontakte/vkui/dist/components/Epic/Epic";
 import PanelHeader from "@vkontakte/vkui/dist/components/PanelHeader/PanelHeader";
 import Group from "@vkontakte/vkui/dist/components/Group/Group";
 import Div from "@vkontakte/vkui/dist/components/Div/Div";
+import Header from "@vkontakte/vkui/dist/components/Header/Header";
+import tort from './img/cake.jpg'
+import Button from "@vkontakte/vkui/dist/components/Button/Button";
 
 const ROUTES = {
     RESTS: 'rests',
     INTRO: 'intro',
     FOOD: 'food',
-    BASKET:'basket',
-    OFFERS:'offers',
+    BASKET: 'basket',
+    OFFERS: 'offers',
 };
 
 const STORAGE_KEYS = {
@@ -177,11 +181,18 @@ const App = () => {
 
     function getRests() {
         return {
-            123: {prop1: '1', prop2: 'img', prop3: 'sdfsdf'},
-            2456: {prop1: '21'},
-            1357: {prop1: '2144', prop2: 'i44mg2'},
-            44444: {prop1: null, prop2: '11i4f4mg2'},
-            342724: {prop1: '21as44', prop2: 'i44dffdmg2'},
+            restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
+            restId2: {restName: '21', restDesc: 'hueta', restPic: 'sdfsdf'},
+            restId3: {restName: '2144', restDesc: 'i44mg2', restPic: 'sdfsdf'},
+            restId4: {restName: null, restDesc: '11i4f4mg2', restPic: 'sdfsdf'},
+            restId5: {restName: '21as44', restDesc: 'i44dffdmg2', restPic: 'sdfsdf'},
+        }
+    }
+
+    function getMenu(rest_id) {
+        return {
+            product1: {prodName: 'zhizha', prodPic: tort, prodPrice: '420P'},
+            product2: {prodName: 'nezhizha', prodPic: tort, prodPrice: '69P'}
         }
     }
 
@@ -192,6 +203,25 @@ const App = () => {
                 <Cell after={getProps(rests[prop])} onClick={() => go(prop)}>{prop}</Cell>
             )
             //console.log(prop)
+        }
+        return ans;
+    }
+
+    function printProds(prods) {
+        let ans = []
+        for (let prop in prods) {
+            ans.push(
+                <Cell expandable before={<img src={tort} height={'50'}/>} after={
+                    <Group>
+                        <SplitLayout>
+                            <Button before={<Icon16Add/>} mode="tertiary"/>
+                            <Cell>228</Cell>
+                            <Button before={<Icon16Minus/>} mode="tertiary"/>
+                        </SplitLayout>
+                    </Group>
+                }>{prods[prop]['prodName']}</Cell>
+            )
+//console.log(prop)
         }
         return ans;
     }
@@ -211,8 +241,14 @@ const App = () => {
                 <Panel id={rest}>
                     <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}>Организации</PanelHeader>
                     <Group>
+                        <Header mode={'primary'}/*aside={<img src='' alt={'пикча рестика'}>}*/>название
+                            рестика {rests[rest]['restName']}</Header>
                         <Div>
-                            Это страничка организаци под названием {rest}
+                            описание: {rests[rest]['restDesc']}
+                        </Div>
+                        <Header mode={'primary'}>Меню:</Header>
+                        <Div id="prod">
+                            {printProds(getMenu(rest))}
                         </Div>
                     </Group>
                 </Panel>
@@ -221,23 +257,24 @@ const App = () => {
         //console.log(res)
         return res
     }
-  ///////////////////////////////////////////функции и переменные для работы с корзиной
+
+    ///////////////////////////////////////////функции и переменные для работы с корзиной
 
     var BASKET = {};
 
-    addFoodToBasket("35",10)
+    addFoodToBasket("35", 10)
     addFoodToBasket("228")
     addFoodToBasket("228", 2)
 
-    function addFoodToBasket(id, amount=1) {
-        if (BASKET.hasOwnProperty(id)){
-            BASKET[id]+=amount;
+    function addFoodToBasket(id, amount = 1) {
+        if (BASKET.hasOwnProperty(id)) {
+            BASKET[id] += amount;
         } else {
             BASKET[id] = amount;
         }
     }
 
-    function printBasket(){
+    function printBasket() {
         let ans = []
         for (let food in BASKET) {
             ans.push(
@@ -248,45 +285,46 @@ const App = () => {
         return ans;
     }
 
-    function getFoodNameById(id){
-        if (id === "35"){
+    function getFoodNameById(id) {
+        if (id === "35") {
             return "МММясо"
         }
-        if (id === "228"){
+        if (id === "228") {
             return "Пивко"
         }
     }
 
-    function getAmountOfFoodInBasket(){
+    function getAmountOfFoodInBasket() {
         let acc = 0;
-        for (let item in BASKET){
-            acc+=BASKET[item];
+        for (let item in BASKET) {
+            acc += BASKET[item];
         }
         return acc;
     }
+
     ////////////////////////////////////////Заказы
 
     function getAvailableOrganisation(person_id) {
         return [
             {
-                person_id:person_id,
+                person_id: person_id,
                 organization_id: 228,
-                person_status:"gay"
+                person_status: "gay"
             }
         ]
     }
 
     function printOffersButton() {
-        if (getAvailableOrganisation(_user.id))
-        return(<TabbarItem
-            onClick={onStoryChange}
-            selected={activeStory === 'offers'}
-            data-story="offers"
-            text="Заказы"
-        ><Icon28ClipOutline /></TabbarItem>)
+        //if (getAvailableOrganisation(_user.id))
+            return (<TabbarItem
+                onClick={onStoryChange}
+                selected={activeStory === 'offers'}
+                data-story="offers"
+                text="Заказы"
+            ><Icon28ClipOutline/></TabbarItem>)
     }
 
-    const Example = withAdaptivity(({ viewWidth }) => {
+    const Example = withAdaptivity(({viewWidth}) => {
         const platform = usePlatform();
         const isDesktop = viewWidth >= ViewWidth.TABLET;
         const hasHeader = platform !== VKCOM;
@@ -294,13 +332,13 @@ const App = () => {
         return (
 
             <SplitLayout
-                header={hasHeader && <PanelHeader separator={false} />}
-                style={{ justifyContent: "center" }}
+                header={hasHeader && <PanelHeader separator={false}/>}
+                style={{justifyContent: "center"}}
             >
                 {isDesktop && (
                     <SplitCol fixed width="280px" maxWidth="280px">
                         <Panel>
-                            {hasHeader && <PanelHeader />}
+                            {hasHeader && <PanelHeader/>}
                             <Group>
                                 <Cell
                                     disabled={activeStory === 'rests'}
@@ -310,7 +348,7 @@ const App = () => {
                                     } : {}}
                                     data-story="rests"
                                     onClick={onStoryChange}
-                                    before={<Icon28NewsfeedOutline />}
+                                    before={<Icon28NewsfeedOutline/>}
                                 >
                                     feed
                                 </Cell>
@@ -322,7 +360,7 @@ const App = () => {
                                     } : {}}
                                     data-story="food"
                                     onClick={onStoryChange}
-                                    before={<Icon28ServicesOutline />}
+                                    before={<Icon28ServicesOutline/>}
                                 >
                                     services
                                 </Cell>
@@ -334,7 +372,7 @@ const App = () => {
                                     } : {}}
                                     data-story="basket"
                                     onClick={onStoryChange}
-                                    before={<Icon28MessageOutline />}
+                                    before={<Icon28MessageOutline/>}
                                 >
                                     messages
                                 </Cell>
@@ -346,7 +384,7 @@ const App = () => {
                                     } : {}}
                                     data-story="offers"
                                     onClick={onStoryChange}
-                                    before={<Icon28ClipOutline />}
+                                    before={<Icon28ClipOutline/>}
                                 >
                                     clips
                                 </Cell>
@@ -368,7 +406,7 @@ const App = () => {
                             selected={activeStory === 'rests'}
                             data-story="rests"
                             text="Организации"
-                        ><Icon28NewsfeedOutline /></TabbarItem>
+                        ><Icon28NewsfeedOutline/></TabbarItem>
                         <TabbarItem
                             onClick={onStoryChange}
                             selected={activeStory === 'food'}
@@ -381,7 +419,7 @@ const App = () => {
                             data-story="basket"
                             label={getAmountOfFoodInBasket()}
                             text="Корзина"
-                        ><Icon28MessageOutline /></TabbarItem>
+                        ><Icon28MessageOutline/></TabbarItem>
 
                         {printOffersButton()}
                     </Tabbar>
@@ -403,8 +441,8 @@ const App = () => {
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
                                 <PanelHeader>Еда</PanelHeader>
-                                <Group style={{ height: '1000px' }}>
-                                    <Placeholder icon={<Icon28ServicesOutline width={56} height={56} />}>
+                                <Group style={{height: '1000px'}}>
+                                    <Placeholder icon={<Icon28ServicesOutline width={56} height={56}/>}>
                                     </Placeholder>
                                 </Group>
                             </Panel>
@@ -412,7 +450,7 @@ const App = () => {
                         <View id="basket" activePanel="basket" popout={popout}>
                             <Panel id="basket">
                                 <PanelHeader>Корзина</PanelHeader>
-                                <Group style={{ height: '1000px' }}>
+                                <Group style={{height: '1000px'}}>
                                     {printBasket()}
                                 </Group>
                             </Panel>
@@ -420,13 +458,13 @@ const App = () => {
                         <View id="offers" activePanel="offers" popout={popout}>
                             <Panel id="offers">
                                 <PanelHeader>Заказы</PanelHeader>
-                                <Group style={{ height: '1000px' }}>
-                                    <Placeholder icon={<Icon28ClipOutline width={56} height={56} />}>
+                                <Group style={{height: '1000px'}}>
+                                    <Placeholder icon={<Icon28ClipOutline width={56} height={56}/>}>
                                     </Placeholder>
                                 </Group>
                             </Panel>
                         </View>
-                        <View id ="intro" activePanel="intro" popout={popout}>
+                        <View id="intro" activePanel="intro" popout={popout}>
                             <Intro id={ROUTES.INTRO} fetchedUser={fetchedUser} go={viewIntro} snackbarError={snackbar}
                                    userHasSeenIntro={userHasSeenIntro} route={ROUTES.RESTS}/>
                         </View>
@@ -449,7 +487,7 @@ const App = () => {
         </View>
         */
     return (
-        <Example />
+        <Example/>
     );
 }
 
