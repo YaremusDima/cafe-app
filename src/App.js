@@ -68,7 +68,9 @@ const App = () => {
     const [userHasSeenIntro, setUserHasSeenIntro] = useState(false);
     const [snackbar, setSnackbar] = useState(null);
     const [activeStory, setActiveStory] = React.useState('intro');
-    const [activePanel, setActivePanel] = React.useState("rests");
+    const [activePanelRests, setActivePanelRests] = React.useState("rests");
+    const [activePanelFood, setActivePanelFood] = React.useState("food");
+    const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
 
     useEffect(() => {
@@ -127,11 +129,23 @@ const App = () => {
 
     const go = view => {
         setActiveStory(view);
-        setActivePanel(view);
+        setActivePanelRests(view);
     };
 
-    const goPanel = (panel) => {
-        setActivePanel(panel);
+    const goPanelRests = (panel) => {
+        setActivePanelRests(panel);
+    };
+
+    const goPanelFood = (panel) => {
+        setActivePanelRests(panel);
+    };
+
+    const goPanelBasket = (panel) => {
+        setActivePanelRests(panel);
+    };
+
+    const goPanelOffers = (panel) => {
+        setActivePanelRests(panel);
     };
 
     const viewIntro = async () => {
@@ -175,7 +189,7 @@ const App = () => {
             ans.push(
                 <Cell after={getProps(rests[prop])} onClick={() => go(prop)}>{prop}</Cell>
             )
-            console.log(prop)
+            //console.log(prop)
         }
         return ans;
     }
@@ -202,16 +216,54 @@ const App = () => {
                 </Panel>
             )
         }
-        console.log(res)
+        //console.log(res)
         return res
     }
-  ///////////////////////////////////////////
+  ///////////////////////////////////////////функции и переменные для работы с корзиной
+
+    var BASKET = {};
+
+    addFoodToBasket("35",10)
+    addFoodToBasket("228")
+    addFoodToBasket("228")
+
+    function addFoodToBasket(id, amount=1) {
+        if (BASKET.hasOwnProperty(id)){
+            BASKET[id]+=amount;
+        } else {
+            BASKET[id] = amount;
+        }
+    }
+
+    function printBasket(){
+        let ans = []
+        for (let food in BASKET) {
+            ans.push(
+                <Cell after={BASKET[food]}>{getFoodNameById(food)}</Cell>
+            )
+            //console.log(prop)
+        }
+        return ans;
+    }
+
+    function getFoodNameById(id){
+        if (id === "35"){
+            return "МММясо"
+        }
+        if (id === "228"){
+            return "Пивко"
+        }
+    }
+
+    ////////////////////////////////////////
+
     const Example = withAdaptivity(({ viewWidth }) => {
         const platform = usePlatform();
         const isDesktop = viewWidth >= ViewWidth.TABLET;
         const hasHeader = platform !== VKCOM;
 
         return (
+
             <SplitLayout
                 header={hasHeader && <PanelHeader separator={false} />}
                 style={{ justifyContent: "center" }}
@@ -309,22 +361,23 @@ const App = () => {
                         ><Icon28ClipOutline /></TabbarItem>
                     </Tabbar>
                     }>
-                        <View id="rests" activePanel={activePanel} popout={popout}>
+                        <View id="rests" activePanel={activePanelRests} popout={popout}>
                             <Panel id="rests">
-                                <PanelHeader left={<PanelHeaderBack/>}>Организации</PanelHeader>
+                                <PanelHeader>Организации</PanelHeader>
                                 {fetchedUser &&
                                 <Group style={{height: '1000px'}}>
                                     <Search/>
                                     <Div id="rest">
-                                        {printRests(getRests(), goPanel)}
+                                        {printRests(getRests(), goPanelRests)}
                                     </Div>
+
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(getRests(), goPanel)}
+                            {createRestsPanels(getRests(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
-                                <PanelHeader left={<PanelHeaderBack />}>Еда</PanelHeader>
+                                <PanelHeader>Еда</PanelHeader>
                                 <Group style={{ height: '1000px' }}>
                                     <Placeholder icon={<Icon28ServicesOutline width={56} height={56} />}>
                                     </Placeholder>
@@ -333,16 +386,15 @@ const App = () => {
                         </View>
                         <View id="basket" activePanel="basket" popout={popout}>
                             <Panel id="basket">
-                                <PanelHeader left={<PanelHeaderBack />}>Корзина</PanelHeader>
+                                <PanelHeader>Корзина</PanelHeader>
                                 <Group style={{ height: '1000px' }}>
-                                    <Placeholder icon={<Icon28MessageOutline width={56} height={56} />}>
-                                    </Placeholder>
+                                    {printBasket()}
                                 </Group>
                             </Panel>
                         </View>
                         <View id="offers" activePanel="offers" popout={popout}>
                             <Panel id="offers">
-                                <PanelHeader left={<PanelHeaderBack />}>Заказы</PanelHeader>
+                                <PanelHeader>Заказы</PanelHeader>
                                 <Group style={{ height: '1000px' }}>
                                     <Placeholder icon={<Icon28ClipOutline width={56} height={56} />}>
                                     </Placeholder>
@@ -363,7 +415,7 @@ const App = () => {
 
 
     /*
-    <View activePanel={activePanel} popout={popout}>
+    <View activePanelRests={activePanelRests} popout={popout}>
             <Home id={ROUTES.HOME} fetchedUser={fetchedUser} go={go} snackbarError={snackbar} ROUTES={ROUTES}/>
             <Intro id={ROUTES.INTRO} fetchedUser={fetchedUser} go={viewIntro} snackbarError={snackbar}
                    userHasSeenIntro={userHasSeenIntro}/>
