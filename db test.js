@@ -156,7 +156,6 @@ function insertIntoPersons(data) {
     } else {
         console.error("Wrong object insert");
     }
-
 }
 
 function getOrganisation(request = '') {
