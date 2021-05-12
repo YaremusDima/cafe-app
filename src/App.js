@@ -13,7 +13,7 @@ import {
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
 
-import Home from './panels/Home';
+
 import Intro from './panels/Intro';
 import {
     Cell,

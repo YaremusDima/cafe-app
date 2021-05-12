@@ -11,7 +11,8 @@ create table Products(
     product_id int primary key,
     product_name varchar(30),
     product_description text,
-    product_cost float
+    product_cost float,
+    product_avatar text
 );
 
 create table "Order"(
@@ -48,3 +49,6 @@ create table Product_status(
 
 );
 
+
+insert into Products values (228,'МАСЛО МАСЛО','МАСЛОРИЙ БЛЯТЬ ЖИЖА ЖИЖА МАСЛО', 0.5)
+insert into Products values (8,'каша малаша','жили у бабуси два веселых гуся одного зовут раджа а другого бобо а третьего ПОТОМ', 1.5)
