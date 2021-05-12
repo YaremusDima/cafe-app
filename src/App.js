@@ -266,7 +266,18 @@ const App = () => {
     }
     ////////////////////////////////////////Заказы
 
+    function getAvailableOrganisation(person_id) {
+        return [
+            {
+                person_id:person_id,
+                organization_id: 228,
+                person_status:"gay"
+            }
+        ]
+    }
+
     function printOffersButton() {
+        if (getAvailableOrganisation(_user.id))
         return(<TabbarItem
             onClick={onStoryChange}
             selected={activeStory === 'offers'}
