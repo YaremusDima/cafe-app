@@ -20,6 +20,7 @@ create table "Order"(
     order_date timestamp,
     organisation_id int references Organisation(organisation_id),
     expectation_time timestamp,
+    order_amount varchar(30),
     order_status int
 );
 create table Persons(
@@ -49,6 +50,13 @@ create table Product_status(
 
 );
 
+create table Payment(
+    payment_id int primary key ,
+    order_id int references "Order"(order_id),
+    payment_status int,
+    payment_amount varchar(30)
+);
 
-insert into Products values (228,'МАСЛО МАСЛО','МАСЛОРИЙ БЛЯТЬ ЖИЖА ЖИЖА МАСЛО', 0.5)
-insert into Products values (8,'каша малаша','жили у бабуси два веселых гуся одного зовут раджа а другого бобо а третьего ПОТОМ', 1.5)
+
+insert into Products values (228,'МАСЛО МАСЛО','МАСЛОРИЙ БЛЯТЬ ЖИЖА ЖИЖА МАСЛО', 0.5);
+insert into Products values (8,'каша малаша','жили у бабуси два веселых гуся одного зовут раджа а другого бобо а третьего ПОТОМ', 1.5);
