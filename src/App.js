@@ -13,7 +13,6 @@ import {
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
 
-
 import Intro from './panels/Intro';
 import {
     Cell,
@@ -72,6 +71,8 @@ const App = () => {
     const [activePanelFood, setActivePanelFood] = React.useState("food");
     const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
+    var isOgranizator = false;
+    var _user;
 
     useEffect(() => {
         bridge.subscribe(({detail: {type, data}}) => {
@@ -87,7 +88,8 @@ const App = () => {
             const storageData = await bridge.send('VKWebAppStorageGet', {
                 keys: Object.values(STORAGE_KEYS)
             });
-            console.log(storageData)
+            _user = user;
+            console.log(user)
             const data = {};
             storageData.keys.forEach(({key, value}) => {
                 try {
@@ -225,7 +227,7 @@ const App = () => {
 
     addFoodToBasket("35",10)
     addFoodToBasket("228")
-    addFoodToBasket("228")
+    addFoodToBasket("228", 2)
 
     function addFoodToBasket(id, amount=1) {
         if (BASKET.hasOwnProperty(id)){
@@ -255,7 +257,23 @@ const App = () => {
         }
     }
 
-    ////////////////////////////////////////
+    function getAmountOfFoodInBasket(){
+        let acc = 0;
+        for (let item in BASKET){
+            acc+=BASKET[item];
+        }
+        return acc;
+    }
+    ////////////////////////////////////////Заказы
+
+    function printOffersButton() {
+        return(<TabbarItem
+            onClick={onStoryChange}
+            selected={activeStory === 'offers'}
+            data-story="offers"
+            text="Заказы"
+        ><Icon28ClipOutline /></TabbarItem>)
+    }
 
     const Example = withAdaptivity(({ viewWidth }) => {
         const platform = usePlatform();
@@ -350,15 +368,11 @@ const App = () => {
                             onClick={onStoryChange}
                             selected={activeStory === 'basket'}
                             data-story="basket"
-                            label="12"
+                            label={getAmountOfFoodInBasket()}
                             text="Корзина"
                         ><Icon28MessageOutline /></TabbarItem>
-                        <TabbarItem
-                            onClick={onStoryChange}
-                            selected={activeStory === 'offers'}
-                            data-story="offers"
-                            text="Заказы"
-                        ><Icon28ClipOutline /></TabbarItem>
+
+                        {printOffersButton()}
                     </Tabbar>
                     }>
                         <View id="rests" activePanel={activePanelRests} popout={popout}>

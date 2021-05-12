@@ -184,7 +184,6 @@ function insertIntoPersons(data) {
     } else {
         console.error("Wrong object insert");
     }
-
 }
 function getAvailableOrganisation(person_id){
     const query = `select * from Person_status where person_id = ${person_id}`
