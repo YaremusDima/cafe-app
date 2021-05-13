@@ -37,6 +37,7 @@ import Header from "@vkontakte/vkui/dist/components/Header/Header";
 import tort from './img/cake.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
 import {object} from "prop-types";
+import * as ReactDOM from "react-dom";
 
 const ROUTES = {
     RESTS: 'rests',
@@ -67,7 +68,6 @@ function generateRestsPanels() {
 }
 
 
-
 const App = () => {
     const [fetchedUser, setUser] = useState(null);
     const [popout, setPopout] = useState(<ScreenSpinner size='large'/>)
@@ -78,9 +78,27 @@ const App = () => {
     const [activePanelFood, setActivePanelFood] = React.useState("food");
     const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
 //    const [testQuant, setTestQuant] = React.useState(0);
+    const [basket, setBasket] = React.useState({});
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
+
+    class AmountCheck extends React.Component {
+        change() {
+            BASKET.setState({
+                id : BASKET[props.id]
+            })
+        }
+
+        render() {
+            return (
+                <SplitLayout>
+                    <div>{BASKET[this.props.id]}</div>
+                </SplitLayout>
+            )
+        }
+    }
+
 
 
     useEffect(() => {
@@ -199,7 +217,7 @@ const App = () => {
             product1: {prodName: 'zhizha', prodPic: tort, prodPrice: '420P'},
             product2: {prodName: 'nezhizha', prodPic: tort, prodPrice: '69P'}
         }
-    }
+    };
 
     /* async function findInBasket(prod_id) {
           if (BASKET.hasOwnProperty(prod_id)) {
@@ -230,40 +248,23 @@ const App = () => {
      */
 
 
-
     function changeAmount(prod_id, action) {
+        console.log('step1')
         if (!BASKET.hasOwnProperty(prod_id)) {
-            BASKET[prod_id] = 0
-        }
-        let prodAmount = {
-            prodId : prod_id,
-            howMuchIsInBasket: function() {
-                return BASKET[prod_id]
-            },
-            addProd: function() {
-                BASKET[prod_id] += 1
-                console.log(BASKET[prod_id])
-
-            },
-            delProd: function() {
-                if (BASKET[prod_id] > 0) {
-                    BASKET[prod_id] += -1
-                    console.log(BASKET[prod_id])
-
-                }
-            }
+            BASKET.prod_id = 0;
         }
         if (action === 1) {
-            prodAmount.addProd();
+            console.log('step2')
+            BASKET.prod_id += 1;
         }
-        if ((action === -1) && (BASKET[prod_id] > 0)) {
-            prodAmount.delProd();
+        if ((action === -1) && (BASKET.prod_id > 0)) {
+            BASKET.prod_id += -1;
         }
         return (
             <Cell>
-                <SplitLayout>
+                <SplitLayout id={'zalupa'}>
                     <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prod_id, -1)}/>
-                    <Cell>{prodAmount.howMuchIsInBasket()}</Cell>
+                    <AmountCheck id={prod_id}/>
                     <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prod_id, 1)}/>
                 </SplitLayout>
             </Cell>
@@ -329,7 +330,9 @@ const App = () => {
 
     ///////////////////////////////////////////функции и переменные для работы с корзиной
 
-    var BASKET = {};
+    var BASKET = {
+        product1: 123
+    };
 
     //addFoodToBasket("35", 10)
     //addFoodToBasket("228")
@@ -347,7 +350,7 @@ const App = () => {
             BASKET[id] = 0;
         }
     }
-*/
+
     function printBasket() {
         let ans = []
         for (let food in BASKET) {
@@ -375,6 +378,7 @@ const App = () => {
         }
         return acc;
     }
+*/
 
     ////////////////////////////////////////Заказы
 
@@ -402,14 +406,14 @@ const App = () => {
         }
     }
 
-    function getOrders(organisation_id){
-        return{
-            order1_id:{
+    function getOrders(organisation_id) {
+        return {
+            order1_id: {
                 order_date: new Date(2011, 0, 1, 12, 0, 0, 0),
                 expectation_time: new Date(2011, 0, 1, 12, 30, 0, 0),
                 order_status: 0,
                 order_amount: 1000,
-                order_content: BASKET,
+                order_content: basket,
             }
         }
     }
@@ -421,7 +425,7 @@ const App = () => {
 
     }
 
-    function printOrg(){
+    function printOrg() {
         console.log(_user)
     }
 
@@ -518,7 +522,7 @@ const App = () => {
                             onClick={onStoryChange}
                             selected={activeStory === 'basket'}
                             data-story="basket"
-                            label={getAmountOfFoodInBasket()}
+                            label={/*getAmountOfFoodInBasket()*/'12'}
                             text="Корзина"
                         ><Icon28MessageOutline/></TabbarItem>
 
@@ -552,7 +556,7 @@ const App = () => {
                             <Panel id="basket">
                                 <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader>
                                 <Group>
-                                    {printBasket()}
+                                    {/*printBasket()*/}
                                 </Group>
                                 <Div className='OfferButton'>
                                     <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
@@ -565,10 +569,10 @@ const App = () => {
                             <Panel id="offers">
                                 <PanelHeader>Заказы</PanelHeader>
 
-                                    <Div>
-                                        {printOrg()}
-                                        <Headline> Организация: {/*getOrganisationById(getAvailableOrganisation(_user.id).organisation_id)*/}</Headline>
-                                    </Div>
+                                <Div>
+                                    {printOrg()}
+                                    <Headline> Организация: {/*getOrganisationById(getAvailableOrganisation(_user.id).organisation_id)*/}</Headline>
+                                </Div>
 
                             </Panel>
                         </View>
