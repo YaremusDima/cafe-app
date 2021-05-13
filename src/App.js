@@ -16,7 +16,7 @@ import '@vkontakte/vkui/dist/vkui.css';
 
 import Intro from './panels/Intro';
 import {
-    Cell,
+    Cell, FixedLayout,
     Panel, PanelHeaderBack,
     Placeholder, Search,
     Snackbar,
@@ -315,13 +315,16 @@ const App = () => {
     }
 
     function printOffersButton() {
-        //if (getAvailableOrganisation(_user.id))
+        if (getAvailableOrganisation(_user).length === 0) {
+            return (<></>);
+        } else {
             return (<TabbarItem
                 onClick={onStoryChange}
                 selected={activeStory === 'offers'}
                 data-story="offers"
                 text="Заказы"
             ><Icon28ClipOutline/></TabbarItem>)
+        }
     }
 
     const Example = withAdaptivity(({viewWidth}) => {
@@ -450,7 +453,7 @@ const App = () => {
                         <View id="basket" activePanel="basket" popout={popout}>
                             <Panel id="basket">
                                 <PanelHeader>Корзина</PanelHeader>
-                                <Group style={{height: '1000px'}}>
+                                <Group>
                                     {printBasket()}
                                 </Group>
                             </Panel>
@@ -458,10 +461,18 @@ const App = () => {
                         <View id="offers" activePanel="offers" popout={popout}>
                             <Panel id="offers">
                                 <PanelHeader>Заказы</PanelHeader>
-                                <Group style={{height: '1000px'}}>
-                                    <Placeholder icon={<Icon28ClipOutline width={56} height={56}/>}>
-                                    </Placeholder>
+                                <Group>
+                                    <Div>
+                                        gooo
+                                    </Div>
                                 </Group>
+                                <FixedLayout vertical='bottom' style={{height:'100px'}}>
+                                    <Div className='OfferButton'>
+                                        <Button mode='commerce' size='l' stretched style={{ marginRight: 8 }}>
+                                            Сделать заказ
+                                        </Button>
+                                    </Div>
+                                </FixedLayout>
                             </Panel>
                         </View>
                         <View id="intro" activePanel="intro" popout={popout}>
