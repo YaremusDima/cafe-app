@@ -50,7 +50,7 @@ class Order {
     order_date;
     organisation_id;
     expectation_time;
-    order_status;
+    order_status;//ожидает приема-0, принят-1, готов-2, готов(забрали)-3, отклонен-4
     order_amount;
     order_content;
 
