@@ -36,6 +36,7 @@ import Div from "@vkontakte/vkui/dist/components/Div/Div";
 import Header from "@vkontakte/vkui/dist/components/Header/Header";
 import tort from './img/cake.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
+import {object} from "prop-types";
 
 const ROUTES = {
     RESTS: 'rests',
@@ -65,6 +66,8 @@ function generateRestsPanels() {
 
 }
 
+
+
 const App = () => {
     const [fetchedUser, setUser] = useState(null);
     const [popout, setPopout] = useState(<ScreenSpinner size='large'/>)
@@ -74,9 +77,11 @@ const App = () => {
     const [activePanelRests, setActivePanelRests] = React.useState("rests");
     const [activePanelFood, setActivePanelFood] = React.useState("food");
     const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
+//    const [testQuant, setTestQuant] = React.useState(0);
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
+
 
     useEffect(() => {
         bridge.subscribe(({detail: {type, data}}) => {
@@ -93,7 +98,7 @@ const App = () => {
                 keys: Object.values(STORAGE_KEYS)
             });
             _user = user;
-            console.log(user)
+            console.log(_user)
             const data = {};
             storageData.keys.forEach(({key, value}) => {
                 try {
@@ -196,6 +201,16 @@ const App = () => {
         }
     }
 
+    /* async function findInBasket(prod_id) {
+          if (BASKET.hasOwnProperty(prod_id)) {
+              BASKET[prod_id] += 1
+          }
+          else {
+              BASKET[prod_id] = 0
+          }
+          return BASKET[prod_id]
+      }*/
+
     function printRests(rests, go) {
         let ans = []
         for (let prop in rests) {
@@ -207,17 +222,70 @@ const App = () => {
         return ans;
     }
 
+    /*
+    ниже в функции при action = 0 - начальный запуск, когда попадаем на страницу ресторана
+                       action = 1 - запуск по нажатию кнопки +
+                       action = -1 - запуск по нажатию кнопки -
+
+     */
+
+
+
+    function changeAmount(prod_id, action) {
+        if (!BASKET.hasOwnProperty(prod_id)) {
+            BASKET[prod_id] = 0
+        }
+        let prodAmount = {
+            prodId : prod_id,
+            howMuchIsInBasket: function() {
+                return BASKET[prod_id]
+            },
+            addProd: function() {
+                BASKET[prod_id] += 1
+                console.log(BASKET[prod_id])
+
+            },
+            delProd: function() {
+                if (BASKET[prod_id] > 0) {
+                    BASKET[prod_id] += -1
+                    console.log(BASKET[prod_id])
+
+                }
+            }
+        }
+        if (action === 1) {
+            prodAmount.addProd();
+        }
+        if ((action === -1) && (BASKET[prod_id] > 0)) {
+            prodAmount.delProd();
+        }
+        return (
+            <Cell>
+                <SplitLayout>
+                    <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prod_id, -1)}/>
+                    <Cell>{prodAmount.howMuchIsInBasket()}</Cell>
+                    <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prod_id, 1)}/>
+                </SplitLayout>
+            </Cell>
+        )
+    }
+
     function printProds(prods) {
         let ans = []
         for (let prop in prods) {
             ans.push(
                 <Cell expandable before={<img src={tort} height={'50'}/>} after={
                     <Group>
-                        <SplitLayout>
-                            <Button before={<Icon16Add/>} mode="tertiary"/>
-                            <Cell>228</Cell>
-                            <Button before={<Icon16Minus/>} mode="tertiary"/>
-                        </SplitLayout>
+                        <Div>
+                            {changeAmount(prop, 0)}
+                        </Div>
+                        {/*
+                            <SplitLayout>
+                                <Button before={<Icon16Minus/>} mode="tertiary"/>
+                                <Cell>{}</Cell>
+                                <Button before={<Icon16Add/>} mode="tertiary" onClick={() => addFoodToBasket(prop)}/>
+                            </SplitLayout>
+                        */}
                     </Group>
                 }>{prods[prop]['prodName']}</Cell>
             )
@@ -262,18 +330,23 @@ const App = () => {
 
     var BASKET = {};
 
-    addFoodToBasket("35", 10)
-    addFoodToBasket("228")
-    addFoodToBasket("228", 2)
+    //addFoodToBasket("35", 10)
+    //addFoodToBasket("228")
+    //addFoodToBasket("228", 2)
 
-    function addFoodToBasket(id, amount = 1) {
+    /*function addFoodToBasket(id, action) {
         if (BASKET.hasOwnProperty(id)) {
-            BASKET[id] += amount;
+            if (action === 1) {
+                BASKET[id] += 1
+            }
+            if ((action === -1) && (BASKET[id] > 0)) {
+                BASKET[id] += -1
+            }
         } else {
-            BASKET[id] = amount;
+            BASKET[id] = 0;
         }
     }
-
+*/
     function printBasket() {
         let ans = []
         for (let food in BASKET) {
@@ -316,12 +389,12 @@ const App = () => {
 
     function printOffersButton() {
         //if (getAvailableOrganisation(_user.id))
-            return (<TabbarItem
-                onClick={onStoryChange}
-                selected={activeStory === 'offers'}
-                data-story="offers"
-                text="Заказы"
-            ><Icon28ClipOutline/></TabbarItem>)
+        return (<TabbarItem
+            onClick={onStoryChange}
+            selected={activeStory === 'offers'}
+            data-story="offers"
+            text="Заказы"
+        ><Icon28ClipOutline/></TabbarItem>)
     }
 
     const Example = withAdaptivity(({viewWidth}) => {
