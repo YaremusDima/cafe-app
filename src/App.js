@@ -5,9 +5,9 @@ import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenS
 //import SnackBar from '@vkontakte/vkui/dist/components/SnackBar/SnackBar';
 import Avatar from '@vkontakte/vkui/dist/components/Avatar/Avatar';
 import {
-    Icon16Add, Icon16Minus,
+    Icon16Add, Icon16Minus, Icon20HomeOutline,
     Icon24Error,
-    Icon28ClipOutline,
+    Icon28ClipOutline, Icon28HomeOutline,
     Icon28MessageOutline,
     Icon28NewsfeedOutline,
     Icon28ServicesOutline, Icon28UserCircleOutline, Icon56NewsfeedOutline
@@ -16,8 +16,8 @@ import '@vkontakte/vkui/dist/vkui.css';
 
 import Intro from './panels/Intro';
 import {
-    Cell,
-    Panel, PanelHeaderBack,
+    Cell, CellButton, FixedLayout, Headline,
+    Panel, PanelHeaderBack, PanelHeaderClose, PanelHeaderContent,
     Placeholder, Search,
     Snackbar,
     SplitCol,
@@ -97,8 +97,8 @@ const App = () => {
             const storageData = await bridge.send('VKWebAppStorageGet', {
                 keys: Object.values(STORAGE_KEYS)
             });
-            _user = user;
-            console.log(_user)
+            _user = JSON.parse(JSON.stringify(user));
+            //console.log(_user)
             const data = {};
             storageData.keys.forEach(({key, value}) => {
                 try {
@@ -307,7 +307,8 @@ const App = () => {
         for (let rest in rests) {
             res.push(
                 <Panel id={rest}>
-                    <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}>Организации</PanelHeader>
+                    <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}
+                                 separator={false}>Организации</PanelHeader>
                     <Group>
                         <Header mode={'primary'}/*aside={<img src='' alt={'пикча рестика'}>}*/>название
                             рестика {rests[rest]['restName']}</Header>
@@ -381,20 +382,47 @@ const App = () => {
         return [
             {
                 person_id: person_id,
-                organization_id: 228,
+                organisation_id: 228,
                 person_status: "gay"
             }
         ]
     }
 
     function printOffersButton() {
-        //if (getAvailableOrganisation(_user.id))
-        return (<TabbarItem
-            onClick={onStoryChange}
-            selected={activeStory === 'offers'}
-            data-story="offers"
-            text="Заказы"
-        ><Icon28ClipOutline/></TabbarItem>)
+        //console.log("printOffersButton", _user)
+        if (getAvailableOrganisation(_user).length === 0) {
+            return (<></>);
+        } else {
+            return (<TabbarItem
+                onClick={onStoryChange}
+                selected={activeStory === 'offers'}
+                data-story="offers"
+                text="Заказы"
+            ><Icon28ClipOutline/></TabbarItem>)
+        }
+    }
+
+    function getOrders(organisation_id){
+        return{
+            order1_id:{
+                order_date: new Date(2011, 0, 1, 12, 0, 0, 0),
+                expectation_time: new Date(2011, 0, 1, 12, 30, 0, 0),
+                order_status: 0,
+                order_amount: 1000,
+                order_content: BASKET,
+            }
+        }
+    }
+
+    function getOrganisationById(id) {
+        if (id === 1) {
+            return "AMOGUS corp."
+        }
+
+    }
+
+    function printOrg(){
+        console.log(_user)
     }
 
     const Example = withAdaptivity(({viewWidth}) => {
@@ -499,7 +527,7 @@ const App = () => {
                     }>
                         <View id="rests" activePanel={activePanelRests} popout={popout}>
                             <Panel id="rests">
-                                <PanelHeader>Организации</PanelHeader>
+                                <PanelHeader><PanelHeaderContent>Организации</PanelHeaderContent></PanelHeader>
                                 {fetchedUser &&
                                 <Group style={{height: '1000px'}}>
                                     <Search/>
@@ -513,7 +541,7 @@ const App = () => {
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
-                                <PanelHeader>Еда</PanelHeader>
+                                <PanelHeader><PanelHeaderContent>Еда</PanelHeaderContent></PanelHeader>
                                 <Group style={{height: '1000px'}}>
                                     <Placeholder icon={<Icon28ServicesOutline width={56} height={56}/>}>
                                     </Placeholder>
@@ -522,19 +550,26 @@ const App = () => {
                         </View>
                         <View id="basket" activePanel="basket" popout={popout}>
                             <Panel id="basket">
-                                <PanelHeader>Корзина</PanelHeader>
-                                <Group style={{height: '1000px'}}>
+                                <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader>
+                                <Group>
                                     {printBasket()}
                                 </Group>
+                                <Div className='OfferButton'>
+                                    <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
+                                        Сделать заказ
+                                    </CellButton>
+                                </Div>
                             </Panel>
                         </View>
                         <View id="offers" activePanel="offers" popout={popout}>
                             <Panel id="offers">
                                 <PanelHeader>Заказы</PanelHeader>
-                                <Group style={{height: '1000px'}}>
-                                    <Placeholder icon={<Icon28ClipOutline width={56} height={56}/>}>
-                                    </Placeholder>
-                                </Group>
+
+                                    <Div>
+                                        {printOrg()}
+                                        <Headline> Организация: {/*getOrganisationById(getAvailableOrganisation(_user.id).organisation_id)*/}</Headline>
+                                    </Div>
+
                             </Panel>
                         </View>
                         <View id="intro" activePanel="intro" popout={popout}>

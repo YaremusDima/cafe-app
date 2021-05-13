@@ -26,7 +26,7 @@ const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go, route}) =>
                             <h3>Этот сервис помогает купить заранее к определенному времени кофе или еду в ресторанах</h3>
                         </Div>
                     </Group>
-                    <FixedLayout vertical='bottom'>
+                    <FixedLayout vertical='bottom' style={{height:'110px'}}>
                         <Div className='OkButton'>
                             <Button mode='commerce' size='l' stretched style={{ marginRight: 8 }} onClick={() => go(route)}>
                                 OK, всё понятно!
