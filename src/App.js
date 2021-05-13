@@ -19,11 +19,11 @@ import {
     Cell, CellButton, FixedLayout, Headline,
     Panel, PanelHeaderBack, PanelHeaderClose, PanelHeaderContent,
     Placeholder, Search,
-    Snackbar,
+    Snackbar, Spacing,
     SplitCol,
     SplitLayout,
     Tabbar,
-    TabbarItem,
+    TabbarItem, Title,
     usePlatform, ViewWidth, VKCOM,
     withAdaptivity
 } from "@vkontakte/vkui";
@@ -67,7 +67,6 @@ function generateRestsPanels() {
 
 }
 
-
 const App = () => {
     const [fetchedUser, setUser] = useState(null);
     const [popout, setPopout] = useState(<ScreenSpinner size='large'/>)
@@ -99,8 +98,6 @@ const App = () => {
         }
     }
 
-
-
     useEffect(() => {
         bridge.subscribe(({detail: {type, data}}) => {
             if (type === 'VKWebAppUpdateConfig') {
@@ -115,8 +112,6 @@ const App = () => {
             const storageData = await bridge.send('VKWebAppStorageGet', {
                 keys: Object.values(STORAGE_KEYS)
             });
-            _user = JSON.parse(JSON.stringify(user));
-            //console.log(_user)
             const data = {};
             storageData.keys.forEach(({key, value}) => {
                 try {
@@ -393,8 +388,7 @@ const App = () => {
     }
 
     function printOffersButton() {
-        //console.log("printOffersButton", _user)
-        if (getAvailableOrganisation(_user).length === 0) {
+        if (getAvailableOrganisation(fetchedUser).length === 0) {
             return (<></>);
         } else {
             return (<TabbarItem
@@ -419,14 +413,27 @@ const App = () => {
     }
 
     function getOrganisationById(id) {
-        if (id === 1) {
+        if (id === 228) {
             return "AMOGUS corp."
         }
-
     }
 
-    function printOrg() {
-        console.log(_user)
+    const Offers = ({id, fetchedUser}) => {
+        return (
+            <Panel id="offers">
+                <Group style={{height: '1000px'}}>
+                    <PanelHeader>Заказы</PanelHeader>
+                    <Spacing/>
+                    <Div id={"organisation-text"}>
+                        <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
+                            fetchedUser.id)[0].organisation_id)}</Headline>
+                    </Div>
+                    <Div>
+                        {}
+                    </Div>
+                </Group>
+            </Panel>
+        )
     }
 
     const Example = withAdaptivity(({viewWidth}) => {
@@ -531,21 +538,23 @@ const App = () => {
                     }>
                         <View id="rests" activePanel={activePanelRests} popout={popout}>
                             <Panel id="rests">
-                                <PanelHeader><PanelHeaderContent>Организации</PanelHeaderContent></PanelHeader>
+                                <PanelHeader><Title weight={"bold"} level={1}>Организации</Title></PanelHeader><Spacing
+                                size={16}/>
                                 {fetchedUser &&
                                 <Group style={{height: '1000px'}}>
-                                    <Search/>
-                                    <Div id="rest">
-                                        {printRests(getRests(), goPanelRests)}
-                                    </Div>
-
+                                    <Fragment>
+                                        <Search/>
+                                        <Div id="rest">
+                                            {printRests(getRests(), goPanelRests)}
+                                        </Div>
+                                    </Fragment>
                                 </Group>}
                             </Panel>
                             {createRestsPanels(getRests(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
-                                <PanelHeader><PanelHeaderContent>Еда</PanelHeaderContent></PanelHeader>
+                                <PanelHeader><PanelHeaderContent>Еда</PanelHeaderContent></PanelHeader><Spacing/>
                                 <Group style={{height: '1000px'}}>
                                     <Placeholder icon={<Icon28ServicesOutline width={56} height={56}/>}>
                                     </Placeholder>
@@ -554,9 +563,9 @@ const App = () => {
                         </View>
                         <View id="basket" activePanel="basket" popout={popout}>
                             <Panel id="basket">
-                                <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader>
-                                <Group>
-                                    {/*printBasket()*/}
+                                <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader><Spacing/>
+                                <Group style={{height: '1000px'}}>
+                                    {printBasket()}
                                 </Group>
                                 <Div className='OfferButton'>
                                     <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
@@ -566,15 +575,7 @@ const App = () => {
                             </Panel>
                         </View>
                         <View id="offers" activePanel="offers" popout={popout}>
-                            <Panel id="offers">
-                                <PanelHeader>Заказы</PanelHeader>
-
-                                <Div>
-                                    {printOrg()}
-                                    <Headline> Организация: {/*getOrganisationById(getAvailableOrganisation(_user.id).organisation_id)*/}</Headline>
-                                </Div>
-
-                            </Panel>
+                            <Offers id={ROUTES.OFFERS} fetchedUser={fetchedUser}/>
                         </View>
                         <View id="intro" activePanel="intro" popout={popout}>
                             <Intro id={ROUTES.INTRO} fetchedUser={fetchedUser} go={viewIntro} snackbarError={snackbar}
