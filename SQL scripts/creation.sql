@@ -56,7 +56,10 @@ create table Payment(
     payment_status int,
     payment_amount varchar(30)
 );
-
+create table Order_status(
+    order_status int primary key,
+    status_description text
+);
 
 insert into Products values (228,'МАСЛО МАСЛО','МАСЛОРИЙ БЛЯТЬ ЖИЖА ЖИЖА МАСЛО', 0.5);
 insert into Products values (8,'каша малаша','жили у бабуси два веселых гуся одного зовут раджа а другого бобо а третьего ПОТОМ', 1.5);

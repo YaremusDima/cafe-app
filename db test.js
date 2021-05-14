@@ -142,7 +142,13 @@ function updateProductStatus(data) {
 
 function getMenu(organisation_id, request) {
     const query = `select * from Product_status right join products on Product_status.product_id = Products.product_id where organisation_id  =${organisation_id} and Product_name like '%${request}%' order by product_name`;
-    return runQuery(query);
+    data =  runQuery(query);
+    products = {};
+    for (item in data){
+        products[item.product_id] = item;
+
+    }
+    return products;
 }
 
 //Продукты конец
@@ -172,6 +178,16 @@ function updateOrderStatus(data) {
         console.error("Wrong input")
     }
 }
+function getOrders(organisation_id){
+    const query = `select * from "Order" where organisation_id = ${organisation_id}`;
+    data = runQuery(query);
+    orders = {};
+    for (item in data){
+        orders[item.order_id] = item;
+        delete orders[item.order_id].order_id;
+    }
+    return orders;
+}
 
 //Заказы конец
 
@@ -192,7 +208,13 @@ function getAvailableOrganisation(person_id){
 
 function getOrganisation(request = '') {
     const query = `select * from Organisation where lower(organisation_name) like lower('%${request}%') order by organisation_name`;
-    return runQuery(query);
+    data =  runQuery(query);
+    organisations = {};
+    for (item in data){
+        organisations[item.organisation_id] = item;
+
+    }
+    return organisations;
 }
 
 function insertIntoOrganisation(data) {
@@ -219,6 +241,14 @@ function insertPayment(data) {
         console.error("Wrong object insert");
     }
 
+}
+function getOrganisationById(id){
+    const query = `select * from Organisation where organisation_id = ${id}`;
+    return runQuery(query);
+}
+function getOrderStatus(id){
+    const query = `select status_description from "Order" right join Order_status on "Order".order_status = Order_status.order_status where order_id =  ${id}`;
+    return runQuery(query);
 }
 
 // console.log(getProduct());
