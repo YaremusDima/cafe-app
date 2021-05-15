@@ -200,7 +200,7 @@ const App = () => {
     function getRests() {
         return {
             restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
-            restId2: {restName: '21', restDesc: 'hueta', restPic: 'sdfsdf'},
+            restId2: {restName: '21', restDesc: 'opisanie', restPic: 'sdfsdf'},
             restId3: {restName: '2144', restDesc: 'i44mg2', restPic: 'sdfsdf'},
             restId4: {restName: null, restDesc: '11i4f4mg2', restPic: 'sdfsdf'},
             restId5: {restName: '21as44', restDesc: 'i44dffdmg2', restPic: 'sdfsdf'},
@@ -209,8 +209,8 @@ const App = () => {
 
     function getMenu(rest_id) {
         return {
-            product1: {prodName: 'zhizha', prodPic: tort, prodPrice: '420P'},
-            product2: {prodName: 'nezhizha', prodPic: tort, prodPrice: '69P'}
+            product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
+            product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
         }
     };
 
@@ -244,44 +244,53 @@ const App = () => {
 
 
     function changeAmount(prod_id, action) {
+        let totCell = document.getElementById(prod_id)
         console.log('step1')
         if (!BASKET.hasOwnProperty(prod_id)) {
-            BASKET.prod_id = 0;
+            console.log('newOne')
+            BASKET[prod_id] = 0;
         }
         if (action === 1) {
-            console.log('step2')
-            BASKET.prod_id += 1;
+            console.log('plus')
+            BASKET[prod_id] += 1;
         }
-        if ((action === -1) && (BASKET.prod_id > 0)) {
-            BASKET.prod_id += -1;
+        if ((action === -1) && (BASKET[prod_id] > 0)) {
+            console.log('minus')
+            BASKET[prod_id] += -1;
         }
-        return (
+        let newNumber = BASKET[prod_id]
+        console.log(BASKET[prod_id])
+        totCell.textContent = newNumber
+        /*return (
             <Cell>
-                <SplitLayout id={'zalupa'}>
+                <SplitLayout>
                     <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prod_id, -1)}/>
-                    <AmountCheck id={prod_id}/>
+                    <Div id={prod_id}>{BASKET.prod_id}</Div>
                     <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prod_id, 1)}/>
                 </SplitLayout>
             </Cell>
-        )
+        )*/
     }
 
     function printProds(prods) {
         let ans = []
         for (let prop in prods) {
+            if (!BASKET.hasOwnProperty(prop)) {
+                BASKET[prop] = 0
+            }
             ans.push(
                 <Cell expandable before={<img src={tort} height={'50'}/>} after={
                     <Group>
-                        <Div>
+                        {/*<Div>
                             {changeAmount(prop, 0)}
-                        </Div>
-                        {/*
+                        </Div>*/}
+                        {
                             <SplitLayout>
-                                <Button before={<Icon16Minus/>} mode="tertiary"/>
-                                <Cell>{}</Cell>
-                                <Button before={<Icon16Add/>} mode="tertiary" onClick={() => addFoodToBasket(prop)}/>
+                                <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prop, -1)}/>
+                                <Cell id = {prop}>{BASKET[prop]}</Cell>
+                                <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prop, 1)}/>
                             </SplitLayout>
-                        */}
+                        }
                     </Group>
                 }>{prods[prop]['prodName']}</Cell>
             )
@@ -326,14 +335,13 @@ const App = () => {
     ///////////////////////////////////////////функции и переменные для работы с корзиной
 
     var BASKET = {
-        product1: 123
-    };
+    }
 
     //addFoodToBasket("35", 10)
     //addFoodToBasket("228")
     //addFoodToBasket("228", 2)
 
-    /*function addFoodToBasket(id, action) {
+    function addFoodToBasket(id, action) {
         if (BASKET.hasOwnProperty(id)) {
             if (action === 1) {
                 BASKET[id] += 1
@@ -373,7 +381,7 @@ const App = () => {
         }
         return acc;
     }
-*/
+
 
     ////////////////////////////////////////Заказы
 
@@ -529,7 +537,7 @@ const App = () => {
                             onClick={onStoryChange}
                             selected={activeStory === 'basket'}
                             data-story="basket"
-                            label={/*getAmountOfFoodInBasket()*/'12'}
+                            label={getAmountOfFoodInBasket()}
                             text="Корзина"
                         ><Icon28MessageOutline/></TabbarItem>
 
