@@ -61,5 +61,15 @@ create table Order_status(
     status_description text
 );
 
-insert into Products values (228,'МАСЛО МАСЛО','МАСЛОРИЙ БЛЯТЬ ЖИЖА ЖИЖА МАСЛО', 0.5);
-insert into Products values (8,'каша малаша','жили у бабуси два веселых гуся одного зовут раджа а другого бобо а третьего ПОТОМ', 1.5);
+insert into Products values (33,'Каша','Нереальная вкусная каша', 0.5);
+insert into Products values (35,'Кофе','кофе кофе вкусный кофе', 7);
+insert into Products values (37,'Жижа','Загадочный бульон', 0.5,'https://prnt.sc/12yd6ka');
+insert into Products values (10,'Булка','Много мяса, мало теста', 56,'https://prnt.sc/12yd9hi');
+insert into Organisation values (2,'Пищевой комбинат','Здесь вас накормят пищей для души и для тела','https://prnt.sc/12ydbzl');
+insert into Organisation values (5,'Кофейная радость','КОФЕ ЖИЖА КОФЕ ЖИЖА КОФЕ ЖИЖА КОФЕ ЖИЖА КОФЕ ЖИЖА ','https://prnt.sc/12ydddy');
+insert into Product_status values (2,33,1);
+insert into Product_status values (2,10,1);
+insert into Product_status values (5,35,1);
+insert into Product_status values (5,37,1);
+insert into Persons values (188856609,'Володя Мельников');
+insert into Person_status values (188856609,2,1);
