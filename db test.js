@@ -132,6 +132,10 @@ function insertIntoProducts(data) {
     }
 
 }
+function getProductById(id){
+    const query = `select * from Products where product_id = ${id}`;
+    return runQuery(query);
+}
 
 function updateProductStatus(data) {
     if (data.hasOwnProperty('product_id') && data.hasOwnProperty('product_status')) {
@@ -140,7 +144,7 @@ function updateProductStatus(data) {
     }
 }
 
-function getMenu(organisation_id, request) {
+function getMenu(organisation_id, request = '') {
     const query = `select * from Product_status right join products on Product_status.product_id = Products.product_id where organisation_id  =${organisation_id} and Product_name like '%${request}%' order by product_name`;
     data =  runQuery(query);
     products = {};
@@ -202,7 +206,7 @@ function insertIntoPersons(data) {
     }
 }
 function getAvailableOrganisation(person_id){
-    const query = `select * from Person_status where person_id = ${person_id}`
+    const query = `select * from Person_status where person_id = ${person_id}`;
         return runQuery(query);
 }
 
