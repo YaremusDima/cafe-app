@@ -197,7 +197,7 @@ const App = () => {
 
 ////////////////////////////////////////// Это функции для создания страниц организаций
 
-    /*function getRests() {
+    /*function getOrganisation() {
         return {
             restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
             restId2: {restName: '21', restDesc: 'opisanie', restPic: 'sdfsdf'},
@@ -543,12 +543,12 @@ const App = () => {
                                     <Fragment>
                                         <Search/>
                                         <Div id="rest">
-                                            {printRests(getRests(), goPanelRests)}
+                                            {printRests(getOrganisation(), goPanelRests)}
                                         </Div>
                                     </Fragment>
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(getRests(), goPanelRests)}
+                            {createRestsPanels(getOrganisation(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
