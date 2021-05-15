@@ -13,7 +13,7 @@ import {
     Icon28ServicesOutline, Icon28UserCircleOutline, Icon56NewsfeedOutline
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
-
+import * as db from './db.js'; 
 import Intro from './panels/Intro';
 import {
     Cell, CellButton, FixedLayout, Headline,
@@ -197,7 +197,7 @@ const App = () => {
 
 ////////////////////////////////////////// Это функции для создания страниц организаций
 
-    /*function getOrganisation() {
+    function getOrganisation() {
         return {
             restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
             restId2: {restName: '21', restDesc: 'opisanie', restPic: 'sdfsdf'},
@@ -212,7 +212,7 @@ const App = () => {
             product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
             product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
         }
-    };*/
+    };
 
     function printRests(rests, go) {
         let ans = []
@@ -312,7 +312,7 @@ const App = () => {
                         </Div>
                         <Header mode={'primary'}>Меню:</Header>
                         <Div id="prod">
-                            {printProds(getMenu(rest))}
+                            {printProds(db.getMenu(rest))}
                         </Div>
                     </Group>
                 </Panel>
@@ -375,7 +375,7 @@ const App = () => {
 
     ////////////////////////////////////////Заказы
 
-    /*function getAvailableOrganisation(person_id) {
+    function getAvailableOrganisation(person_id) {
         return [
             {
                 person_id: person_id,
@@ -383,10 +383,10 @@ const App = () => {
                 person_status: "gay"
             }
         ]
-    }*/
+    }
 
     function printOffersButton() {
-        if (getAvailableOrganisation(fetchedUser).length === 0) {
+        if (db.getAvailableOrganisation(fetchedUser).length === 0) {
             return (<></>);
         } else {
             return (<TabbarItem
@@ -398,7 +398,7 @@ const App = () => {
         }
     }
 
-    /*function getOrders(organisation_id) {
+    function getOrders(organisation_id) {
         return {
             order1_id: {
                 order_date: new Date(2011, 0, 1, 12, 0, 0, 0),
@@ -408,7 +408,7 @@ const App = () => {
                 order_content: basket,
             }
         }
-    }*/
+    }
 
     /*function getOrganisationById(id) {
         if (id === 228) {
@@ -423,7 +423,7 @@ const App = () => {
                     <PanelHeader>Заказы</PanelHeader>
                     <Spacing/>
                     <Div id={"organisation-text"}>
-                        <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
+                        <Headline weight={"medium"}>Организация: {db.getOrganisationById(db.getAvailableOrganisation(
                             fetchedUser.id)[0].organisation_id).organisation_name}</Headline>
                     </Div>
                     <Div>
@@ -543,12 +543,12 @@ const App = () => {
                                     <Fragment>
                                         <Search/>
                                         <Div id="rest">
-                                            {printRests(getOrganisation(), goPanelRests)}
+                                            {printRests(db.getOrganisation(), goPanelRests)}
                                         </Div>
                                     </Fragment>
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(getOrganisation(), goPanelRests)}
+                            {createRestsPanels(db.getOrganisation(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
