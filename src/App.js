@@ -565,7 +565,8 @@ const App = () => {
                             <Panel id="basket">
                                 <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader><Spacing/>
                                 <Group style={{height: '1000px'}}>
-                                    {printBasket()}
+                                    {//printBasket()
+                                    }
                                 </Group>
                                 <Div className='OfferButton'>
                                     <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
