@@ -13,7 +13,7 @@ import {
     Icon28ServicesOutline, Icon28UserCircleOutline, Icon56NewsfeedOutline
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
-
+import * as db from './db.js'; 
 import Intro from './panels/Intro';
 import {
     Cell, CellButton, FixedLayout, Headline,
