@@ -197,7 +197,7 @@ const App = () => {
 
 ////////////////////////////////////////// Это функции для создания страниц организаций
 
-    /*function getOrganisation() {
+    function getOrganisation() {
         return {
             restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
             restId2: {restName: '21', restDesc: 'opisanie', restPic: 'sdfsdf'},
@@ -212,7 +212,7 @@ const App = () => {
             product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
             product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
         }
-    };*/
+    };
 
     function printRests(rests, go) {
         let ans = []
@@ -375,7 +375,7 @@ const App = () => {
 
     ////////////////////////////////////////Заказы
 
-    /*function getAvailableOrganisation(person_id) {
+    function getAvailableOrganisation(person_id) {
         return [
             {
                 person_id: person_id,
@@ -383,7 +383,7 @@ const App = () => {
                 person_status: "gay"
             }
         ]
-    }*/
+    }
 
     function printOffersButton() {
         if (getAvailableOrganisation(fetchedUser).length === 0) {
