@@ -285,7 +285,7 @@ const App = () => {
                 }>{prods[prop]['prodName']}</Cell>
             )
 //console.log(prop)
-        }
+        };
         return ans;
     }
 
