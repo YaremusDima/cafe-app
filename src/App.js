@@ -197,7 +197,7 @@ const App = () => {
 
 ////////////////////////////////////////// Это функции для создания страниц организаций
 
-    function getRests() {
+    /*function getRests() {
         return {
             restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
             restId2: {restName: '21', restDesc: 'opisanie', restPic: 'sdfsdf'},
@@ -212,17 +212,7 @@ const App = () => {
             product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
             product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
         }
-    };
-
-    /* async function findInBasket(prod_id) {
-          if (BASKET.hasOwnProperty(prod_id)) {
-              BASKET[prod_id] += 1
-          }
-          else {
-              BASKET[prod_id] = 0
-          }
-          return BASKET[prod_id]
-      }*/
+    };*/
 
     function printRests(rests, go) {
         let ans = []
@@ -358,14 +348,14 @@ const App = () => {
         let ans = []
         for (let food in BASKET) {
             ans.push(
-                <Cell after={BASKET[food]}>{getFoodNameById(food)}</Cell>
+                <Cell after={BASKET[food]}>{getProductById(food)}</Cell>
             )
             //console.log(prop)
         }
         return ans;
     }
 
-    function getFoodNameById(id) {
+    function getProductById(id) {
         if (id === "35") {
             return "МММясо"
         }
@@ -385,7 +375,7 @@ const App = () => {
 
     ////////////////////////////////////////Заказы
 
-    function getAvailableOrganisation(person_id) {
+    /*function getAvailableOrganisation(person_id) {
         return [
             {
                 person_id: person_id,
@@ -393,7 +383,7 @@ const App = () => {
                 person_status: "gay"
             }
         ]
-    }
+    }*/
 
     function printOffersButton() {
         if (getAvailableOrganisation(fetchedUser).length === 0) {
@@ -408,7 +398,7 @@ const App = () => {
         }
     }
 
-    function getOrders(organisation_id) {
+    /*function getOrders(organisation_id) {
         return {
             order1_id: {
                 order_date: new Date(2011, 0, 1, 12, 0, 0, 0),
@@ -418,13 +408,13 @@ const App = () => {
                 order_content: basket,
             }
         }
-    }
+    }*/
 
-    function getOrganisationById(id) {
+    /*function getOrganisationById(id) {
         if (id === 228) {
             return "AMOGUS corp."
         }
-    }
+    }*/
 
     const Offers = ({id, fetchedUser}) => {
         return (
@@ -434,7 +424,7 @@ const App = () => {
                     <Spacing/>
                     <Div id={"organisation-text"}>
                         <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
-                            fetchedUser.id)[0].organisation_id)}</Headline>
+                            fetchedUser.id)[0].organisation_id).organisation_name}</Headline>
                     </Div>
                     <Div>
                         {}
