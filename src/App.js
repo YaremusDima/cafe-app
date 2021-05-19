@@ -13,7 +13,7 @@ import {
     Icon28ServicesOutline, Icon28UserCircleOutline, Icon56NewsfeedOutline
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
-import * as db from './db.js'; 
+//import * as db from './db.js';
 import Intro from './panels/Intro';
 import {
     Cell, CellButton, FixedLayout, Headline,
@@ -67,6 +67,9 @@ function generateRestsPanels() {
 
 }
 
+var BASKET = {}
+var currentOrganisationChoice = ''
+
 const App = () => {
     const [fetchedUser, setUser] = useState(null);
     const [popout, setPopout] = useState(<ScreenSpinner size='large'/>)
@@ -76,8 +79,6 @@ const App = () => {
     const [activePanelRests, setActivePanelRests] = React.useState("rests");
     const [activePanelFood, setActivePanelFood] = React.useState("food");
     const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
-//    const [testQuant, setTestQuant] = React.useState(0);
-    const [basket, setBasket] = React.useState({});
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
@@ -85,7 +86,7 @@ const App = () => {
     class AmountCheck extends React.Component {
         change() {
             BASKET.setState({
-                id : BASKET[props.id]
+                id: BASKET[props.id]
             })
         }
 
@@ -208,9 +209,15 @@ const App = () => {
     }
 
     function getMenu(rest_id) {
-        return {
-            product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
-            product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
+        if (rest_id === 'restId1') {
+            return {
+                productId1: {prodName: 'product1', prodPic: tort, prodPrice: '420P', prodOrgId: 'restId1'},
+            }
+        }
+        if (rest_id === 'restId2') {
+            return {
+                productId2: {prodName: 'product2', prodPic: tort, prodPrice: '69P', prodOrgId: 'restId2'}
+            }
         }
     };
 
@@ -233,59 +240,80 @@ const App = () => {
      */
 
 
-    function changeAmount(prod_id, action) {
+    function changeAmount(prod_id, action, organisation) {
         let totCell = document.getElementById(prod_id)
+        let iTotCell = document.getElementById(prod_id + 'InBasket')
         console.log('step1')
         if (!BASKET.hasOwnProperty(prod_id)) {
             console.log('newOne')
             BASKET[prod_id] = 0;
         }
         if (action === 1) {
-            console.log('plus')
-            BASKET[prod_id] += 1;
+            if ((organisation === currentOrganisationChoice) || (currentOrganisationChoice === '')) {
+                currentOrganisationChoice = organisation
+                console.log(organisation)
+                console.log('plus')
+                BASKET[prod_id] += 1;
+                console.log(BASKET)
+                let newNumber = BASKET[prod_id]
+                if (totCell !== null) {
+                    totCell.textContent = newNumber
+                }
+                if (iTotCell !== null) {
+                    iTotCell.textContent = newNumber
+                }
+            } else {
+                alert("В корзину можно одновременно добавлять товары только из одного ресторана!")
+            }
         }
         if ((action === -1) && (BASKET[prod_id] > 0)) {
             console.log('minus')
-            BASKET[prod_id] += -1;
+            BASKET[prod_id] += -1
+            console.log(BASKET)
+            let newNumber = BASKET[prod_id]
+            if (totCell !== null) {
+                totCell.textContent = newNumber
+            }
+            if (iTotCell !== null) {
+                iTotCell.textContent = newNumber
+            }
+            let basketEmpty = true
+            for (let food in BASKET) {
+                if (BASKET[food] > 0) {
+                    basketEmpty = false
+                }
+            }
+            if (basketEmpty) {
+                currentOrganisationChoice = ''
+            }
         }
-        let newNumber = BASKET[prod_id]
-        console.log(BASKET[prod_id])
-        totCell.textContent = newNumber
-        /*return (
-            <Cell>
-                <SplitLayout>
-                    <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prod_id, -1)}/>
-                    <Div id={prod_id}>{BASKET.prod_id}</Div>
-                    <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prod_id, 1)}/>
-                </SplitLayout>
-            </Cell>
-        )*/
+        ;
     }
 
     function printProds(prods) {
+        console.log(BASKET)
         let ans = []
         for (let prop in prods) {
             if (!BASKET.hasOwnProperty(prop)) {
                 BASKET[prop] = 0
             }
             ans.push(
-                <Cell expandable before={<img src={tort} height={'50'}/>} after={
+                <Cell expandable before={<img src={prods[prop].prodPic} height={'50'}/>} after={
                     <Group>
-                        {/*<Div>
-                            {changeAmount(prop, 0)}
-                        </Div>*/}
                         {
                             <SplitLayout>
-                                <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prop, -1)}/>
-                                <Cell id = {prop}>{BASKET[prop]}</Cell>
-                                <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prop, 1)}/>
+                                <Button before={<Icon16Minus/>} mode="tertiary"
+                                        onClick={() => changeAmount(prop, -1, prods[prop].prodOrgId)}/>
+                                <Cell id={prop}>{BASKET[prop]}</Cell>
+                                <Button before={<Icon16Add/>} mode="tertiary"
+                                        onClick={() => changeAmount(prop, 1, prods[prop].prodOrgId)}/>
                             </SplitLayout>
                         }
                     </Group>
                 }>{prods[prop]['prodName']}</Cell>
             )
-//console.log(prop)
-        };
+        }
+        ;
         return ans;
     }
 
@@ -303,8 +331,8 @@ const App = () => {
             res.push(
                 <Panel id={rest}>
                     <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}
-                                 separator={false}>Организации</PanelHeader>
-                    <Group>
+                                 separator={false}>Организации</PanelHeader><Spacing size={16}/>
+                    <Group style={{height: '1000px'}}>
                         <Header mode={'primary'}/*aside={<img src='' alt={'пикча рестика'}>}*/>название
                             рестика {rests[rest]['restName']}</Header>
                         <Div>
@@ -312,48 +340,66 @@ const App = () => {
                         </Div>
                         <Header mode={'primary'}>Меню:</Header>
                         <Div id="prod">
-                            {printProds(db.getMenu(rest))}
+                            {printProds(getMenu(rest))}
                         </Div>
                     </Group>
                 </Panel>
             )
         }
-        //console.log(res)
         return res
     }
 
     ///////////////////////////////////////////функции и переменные для работы с корзиной
 
-    var BASKET = {
-    }
-
-    //addFoodToBasket("35", 10)
-    //addFoodToBasket("228")
-    //addFoodToBasket("228", 2)
-
-    function addFoodToBasket(id, action) {
-        if (BASKET.hasOwnProperty(id)) {
-            if (action === 1) {
-                BASKET[id] += 1
-            }
-            if ((action === -1) && (BASKET[id] > 0)) {
-                BASKET[id] += -1
-            }
-        } else {
-            BASKET[id] = 0;
+    function getProdName(prodId) {
+        if (prodId === 'productId1') {
+            return('product1')
+        }
+        if (prodId === 'productId2') {
+            return('product2')
         }
     }
 
-    function printBasket() {
+    function getProdOrg(prodId) {
+        if (prodId === 'productId1') {
+            return('restId1')
+        }
+        if (prodId === 'productId2') {
+            return('restId2')
+        }
+    }
+
+    function printBasket() {    
         let ans = []
         for (let food in BASKET) {
-            ans.push(
-                <Cell after={BASKET[food]}>{getProductById(food)}</Cell>
-            )
-            //console.log(prop)
+            if (BASKET[food] > 0) {
+                ans.push(
+                    <Cell expandable before={<img src={tort} height={'50'}/>} after={
+                        <Group>
+                            {
+                                <SplitLayout>
+                                    <Button before={<Icon16Minus/>} mode="tertiary"
+                                            onClick={() => changeAmount(food, -1, getProdOrg(food))}/>
+                                    <Cell id={food + 'InBasket'}>{BASKET[food]}</Cell>
+                                    <Button before={<Icon16Add/>} mode="tertiary"
+                                            onClick={() => changeAmount(food, 1, getProdOrg(food))}/>
+                                </SplitLayout>
+                            }
+                        </Group>
+                    }>{getProdName(food)} </Cell>
+                )
+            }
         }
-        return ans;
+        if (ans.length > 0) {
+            return ans;
+        } else {
+            return (
+                <p align={'center'}>В корзине пока что пусто.</p>
+            )
+        }
+        ;
     }
+
 
     function getProductById(id) {
         if (id === "35") {
@@ -386,7 +432,7 @@ const App = () => {
     }
 
     function printOffersButton() {
-        if (db.getAvailableOrganisation(fetchedUser).length === 0) {
+        if (getAvailableOrganisation(fetchedUser).length === 0) {
             return (<></>);
         } else {
             return (<TabbarItem
@@ -405,16 +451,16 @@ const App = () => {
                 expectation_time: new Date(2011, 0, 1, 12, 30, 0, 0),
                 order_status: 0,
                 order_amount: 1000,
-                order_content: basket,
+                order_content: ''
             }
         }
     }
 
-    /*function getOrganisationById(id) {
+    function getOrganisationById(id) {
         if (id === 228) {
             return "AMOGUS corp."
         }
-    }*/
+    }
 
     const Offers = ({id, fetchedUser}) => {
         return (
@@ -423,7 +469,7 @@ const App = () => {
                     <PanelHeader>Заказы</PanelHeader>
                     <Spacing/>
                     <Div id={"organisation-text"}>
-                        <Headline weight={"medium"}>Организация: {db.getOrganisationById(db.getAvailableOrganisation(
+                        <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
                             fetchedUser.id)[0].organisation_id).organisation_name}</Headline>
                     </Div>
                     <Div>
@@ -527,7 +573,7 @@ const App = () => {
                             onClick={onStoryChange}
                             selected={activeStory === 'basket'}
                             data-story="basket"
-                            label={getAmountOfFoodInBasket()}
+                            label={getAmountOfFoodInBasket() !== 0 ? getAmountOfFoodInBasket() : ''}
                             text="Корзина"
                         ><Icon28MessageOutline/></TabbarItem>
 
@@ -541,14 +587,14 @@ const App = () => {
                                 {fetchedUser &&
                                 <Group style={{height: '1000px'}}>
                                     <Fragment>
-                                        <Search/>
+                                        {/*<Search/>*/}
                                         <Div id="rest">
-                                            {printRests(db.getOrganisation(), goPanelRests)}
+                                            {printRests(getOrganisation(), goPanelRests)}
                                         </Div>
                                     </Fragment>
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(db.getOrganisation(), goPanelRests)}
+                            {createRestsPanels(getOrganisation(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
@@ -563,14 +609,17 @@ const App = () => {
                             <Panel id="basket">
                                 <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader><Spacing/>
                                 <Group style={{height: '1000px'}}>
-                                    {//printBasket()
-                                    }
+                                    <Fragment>
+                                        <Div id="rest">
+                                            {printBasket()}
+                                        </Div>
+                                    </Fragment>
+                                    <Div className='OfferButton'>
+                                        <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
+                                            Сделать заказ
+                                        </CellButton>
+                                    </Div>
                                 </Group>
-                                <Div className='OfferButton'>
-                                    <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
-                                        Сделать заказ
-                                    </CellButton>
-                                </Div>
                             </Panel>
                         </View>
                         <View id="offers" activePanel="offers" popout={popout}>
