@@ -13,7 +13,6 @@ import {
     Icon28ServicesOutline, Icon28UserCircleOutline, Icon56NewsfeedOutline
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
-import * as db from './db.js'; 
 import Intro from './panels/Intro';
 import {
     Cell, CellButton, FixedLayout, Headline,
@@ -35,6 +34,7 @@ import Group from "@vkontakte/vkui/dist/components/Group/Group";
 import Div from "@vkontakte/vkui/dist/components/Div/Div";
 import Header from "@vkontakte/vkui/dist/components/Header/Header";
 import tort from './img/cake.jpg'
+import cap from './img/cappucino.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
 import {object} from "prop-types";
 import * as ReactDOM from "react-dom";
@@ -67,6 +67,10 @@ function generateRestsPanels() {
 
 }
 
+var BASKET = {}
+var currentOrganisationChoice = ''
+var basketCost = 0
+
 const App = () => {
     const [fetchedUser, setUser] = useState(null);
     const [popout, setPopout] = useState(<ScreenSpinner size='large'/>)
@@ -76,27 +80,9 @@ const App = () => {
     const [activePanelRests, setActivePanelRests] = React.useState("rests");
     const [activePanelFood, setActivePanelFood] = React.useState("food");
     const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
-//    const [testQuant, setTestQuant] = React.useState(0);
-    const [basket, setBasket] = React.useState({});
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
-
-    class AmountCheck extends React.Component {
-        change() {
-            BASKET.setState({
-                id : BASKET[props.id]
-            })
-        }
-
-        render() {
-            return (
-                <SplitLayout>
-                    <div>{BASKET[this.props.id]}</div>
-                </SplitLayout>
-            )
-        }
-    }
 
     useEffect(() => {
         bridge.subscribe(({detail: {type, data}}) => {
@@ -126,8 +112,8 @@ const App = () => {
                         default:
                             break;
                     }
-                    //setActiveStory(ROUTES.INTRO)
-                    //setUserHasSeenIntro(false)
+                    setActiveStory(ROUTES.INTRO)
+                    setUserHasSeenIntro(false)
                 } catch (error) {
                     setSnackbar(<Snackbar
                             layout='vertical'
@@ -199,18 +185,24 @@ const App = () => {
 
     function getOrganisation() {
         return {
-            restId1: {restName: '4444', restDesc: 'smth', restPic: 'sdfsdf'},
-            restId2: {restName: '21', restDesc: 'opisanie', restPic: 'sdfsdf'},
-            restId3: {restName: '2144', restDesc: 'i44mg2', restPic: 'sdfsdf'},
-            restId4: {restName: null, restDesc: '11i4f4mg2', restPic: 'sdfsdf'},
-            restId5: {restName: '21as44', restDesc: 'i44dffdmg2', restPic: 'sdfsdf'},
+            restId1: {restName: 'Зачет', restDesc: 'описание1', restPic: cap, restLocation: 'Долгопрудный, Первомайская 28А'},
+            restId2: {restName: 'Ардис', restDesc: 'описание2', restPic: cap, restLocation: 'Долгопрудный, Первомайская 28А'},
+            restId3: {restName: 'Болтай', restDesc: 'описание3', restPic: cap, restLocation: 'Долгопрудный, Первомайская 28А'},
+            restId4: {restName: 'Кофейня НК', restDesc: 'описание4', restPic: cap, restLocation: 'Долгопрудный, Первомайская 28А'},
+            restId5: {restName: 'Формула шаурмы', restDesc: 'описание5', restPic: cap, restLocation: 'Долгопрудный, Первомайская 28А'},
         }
     }
 
     function getMenu(rest_id) {
-        return {
-            product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
-            product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
+        if (rest_id === 'restId1') {
+            return {
+                productId1: {prodName: 'тортик', prodPic: tort, prodPrice: 420, prodOrgId: 'restId1'},
+            }
+        }
+        if (rest_id === 'restId2') {
+            return {
+                productId2: {prodName: 'каппучино', prodPic: cap, prodPrice: 69, prodOrgId: 'restId2'}
+            }
         }
     };
 
@@ -218,9 +210,8 @@ const App = () => {
         let ans = []
         for (let prop in rests) {
             ans.push(
-                <Cell after={getProps(rests[prop])} onClick={() => go(prop)}>{prop}</Cell>
+                <Cell expandable before={<img src={rests[prop].restPic} height={'50'}/>} after={rests[prop].restLocation} onClick={() => go(prop)}>{rests[prop].restName}</Cell>
             )
-            //console.log(prop)
         }
         return ans;
     }
@@ -233,59 +224,99 @@ const App = () => {
      */
 
 
-    function changeAmount(prod_id, action) {
+    function changeAmount(prod_id, action, organisation, price) {
         let totCell = document.getElementById(prod_id)
+        let iTotCell = document.getElementById(prod_id + 'InBasket')
+        let priceCell = document.getElementById('finalCost')
+        let labelCell = document.getElementById('basketLabel')
         console.log('step1')
         if (!BASKET.hasOwnProperty(prod_id)) {
             console.log('newOne')
-            BASKET[prod_id] = 0;
+            BASKET[prod_id] = 0
         }
         if (action === 1) {
-            console.log('plus')
-            BASKET[prod_id] += 1;
+            if ((organisation === currentOrganisationChoice) || (currentOrganisationChoice === '')) {
+                currentOrganisationChoice = organisation
+                console.log(organisation)
+                console.log('plus')
+                BASKET[prod_id] += 1
+                basketCost += price
+                console.log(BASKET)
+                let newNumber = BASKET[prod_id]
+                let newCost = basketCost
+                let newAmount = getAmountOfFoodInBasket()
+                if (totCell !== null) {
+                    totCell.textContent = newNumber
+                }
+                if (iTotCell !== null) {
+                    iTotCell.textContent = newNumber
+                }
+                if (priceCell !== null) {
+                    priceCell.textContent = `Стоимость заказа: ${newCost} руб`
+                }
+                if (labelCell !== null) {
+                    labelCell.textContent = `${getAmountOfFoodInBasket()}`
+                }
+            } else {
+                alert("В корзину можно одновременно добавлять товары только из одного ресторана!")
+            }
         }
         if ((action === -1) && (BASKET[prod_id] > 0)) {
             console.log('minus')
-            BASKET[prod_id] += -1;
+            BASKET[prod_id] += -1
+            basketCost += -price
+            console.log(BASKET)
+            let newNumber = BASKET[prod_id]
+            let newCost = basketCost
+            let newAmount = getAmountOfFoodInBasket()
+            if (totCell !== null) {
+                totCell.textContent = newNumber
+            }
+            if (iTotCell !== null) {
+                iTotCell.textContent = newNumber
+            }
+            if (priceCell !== null) {
+                priceCell.textContent = `Стоимость заказа: ${newCost} руб`
+            }
+            if (labelCell !== null) {
+                labelCell.textContent = `${newAmount}`
+            }
+            let basketEmpty = true
+            for (let food in BASKET) {
+                if (BASKET[food] > 0) {
+                    basketEmpty = false
+                }
+            }
+            if (basketEmpty) {
+                currentOrganisationChoice = ''
+            }
         }
-        let newNumber = BASKET[prod_id]
-        console.log(BASKET[prod_id])
-        totCell.textContent = newNumber
-        /*return (
-            <Cell>
-                <SplitLayout>
-                    <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prod_id, -1)}/>
-                    <Div id={prod_id}>{BASKET.prod_id}</Div>
-                    <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prod_id, 1)}/>
-                </SplitLayout>
-            </Cell>
-        )*/
     }
 
     function printProds(prods) {
+        console.log(BASKET)
         let ans = []
         for (let prop in prods) {
             if (!BASKET.hasOwnProperty(prop)) {
                 BASKET[prop] = 0
             }
             ans.push(
-                <Cell expandable before={<img src={tort} height={'50'}/>} after={
+                <Cell expandable before={<img src={prods[prop].prodPic} height={'50'}/>} after={
                     <Group>
-                        {/*<Div>
-                            {changeAmount(prop, 0)}
-                        </Div>*/}
                         {
                             <SplitLayout>
-                                <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prop, -1)}/>
-                                <Cell id = {prop}>{BASKET[prop]}</Cell>
-                                <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prop, 1)}/>
+                                <Button before={<Icon16Minus/>} mode="tertiary"
+                                        onClick={() => changeAmount(prop, -1, prods[prop].prodOrgId, prods[prop].prodPrice)}/>
+                                <Cell id={prop}>{BASKET[prop]}</Cell>
+                                <Button before={<Icon16Add/>} mode="tertiary"
+                                        onClick={() => changeAmount(prop, 1, prods[prop].prodOrgId, prods[prop].prodPrice)}/>
                             </SplitLayout>
                         }
                     </Group>
-                }>{prods[prop]['prodName']}</Cell>
+                }>{prods[prop]['prodName']}<font color={'grey'}> - {prods[prop].prodPrice} руб</font></Cell>
             )
-//console.log(prop)
         }
+        ;
         return ans;
     }
 
@@ -303,57 +334,87 @@ const App = () => {
             res.push(
                 <Panel id={rest}>
                     <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}
-                                 separator={false}>Организации</PanelHeader>
-                    <Group>
-                        <Header mode={'primary'}/*aside={<img src='' alt={'пикча рестика'}>}*/>название
-                            рестика {rests[rest]['restName']}</Header>
-                        <Div>
-                            описание: {rests[rest]['restDesc']}
-                        </Div>
-                        <Header mode={'primary'}>Меню:</Header>
+                                 separator={false}>Организации</PanelHeader><Spacing size={16}/>
+                    <Group style={{height: '1000px'}}>
+                        <Header mode={'primary'}><b><big>
+                            {rests[rest]['restName']}</big></b></Header>
+                        <Div><em>
+                            {rests[rest]['restDesc']}
+                        </em></Div>
+                        <Header mode={'primary'}><b><medium>Меню:</medium></b></Header>
                         <Div id="prod">
-                            {printProds(db.getMenu(rest))}
+                            {printProds(getMenu(rest))}
                         </Div>
                     </Group>
                 </Panel>
             )
         }
-        //console.log(res)
         return res
     }
 
     ///////////////////////////////////////////функции и переменные для работы с корзиной
 
-    var BASKET = {
-    }
-
-    //addFoodToBasket("35", 10)
-    //addFoodToBasket("228")
-    //addFoodToBasket("228", 2)
-
-    function addFoodToBasket(id, action) {
-        if (BASKET.hasOwnProperty(id)) {
-            if (action === 1) {
-                BASKET[id] += 1
-            }
-            if ((action === -1) && (BASKET[id] > 0)) {
-                BASKET[id] += -1
-            }
-        } else {
-            BASKET[id] = 0;
+    /*function getProdName(prodId) {
+        if (prodId === 'productId1') {
+            return('тортик')
+        }
+        if (prodId === 'productId2') {
+            return('каппучино')
         }
     }
 
-    function printBasket() {
+    function getProdOrg(prodId) {
+        if (prodId === 'productId1') {
+            return('restId1')
+        }
+        if (prodId === 'productId2') {
+            return('restId2')
+        }
+    }
+
+    function getProdPic(prodId) {
+        if (prodId === 'productId1') {
+            return(tort)
+        }
+        if (prodId === 'productId2') {
+            return(cap)
+        }
+    }*/
+
+    function printBasket(prods) {
         let ans = []
         for (let food in BASKET) {
-            ans.push(
-                <Cell after={BASKET[food]}>{getProductById(food)}</Cell>
-            )
-            //console.log(prop)
+            if (BASKET[food] > 0) {
+                ans.push(
+                    <Cell expandable before={<img src={prods[food].prodPic} height={'50'}/>} after={
+                        <Group>
+                            {
+                                <SplitLayout>
+                                    <Button before={<Icon16Minus/>} mode="tertiary"
+                                            onClick={() => changeAmount(food, -1, prods[food].prodOrgId, prods[food].prodPrice)}/>
+                                    <Cell id={food + 'InBasket'}>{BASKET[food]}</Cell>
+                                    <Button before={<Icon16Add/>} mode="tertiary"
+                                            onClick={() => changeAmount(food, 1, prods[food].prodOrgId, prods[food].prodPrice)}/>
+                                </SplitLayout>
+                            }
+                        </Group>
+                    }>{prods[food].prodName} </Cell>
+                )
+                ans.push(
+                    <Cell id={'finalCost'}>Стоимость заказа: {basketCost} руб</Cell>
+                )
+            }
         }
-        return ans;
+        if (ans.length > 0) {
+            return ans;
+        } else {
+            return (
+                <p align={'center'}>В корзине пока что пусто.</p>
+            )
+        }
+        ;
     }
+
 
     function getProductById(id) {
         if (id === "35") {
@@ -386,7 +447,7 @@ const App = () => {
     }
 
     function printOffersButton() {
-        if (db.getAvailableOrganisation(fetchedUser).length === 0) {
+        if (getAvailableOrganisation(fetchedUser).length === 0) {
             return (<></>);
         } else {
             return (<TabbarItem
@@ -405,16 +466,16 @@ const App = () => {
                 expectation_time: new Date(2011, 0, 1, 12, 30, 0, 0),
                 order_status: 0,
                 order_amount: 1000,
-                order_content: basket,
+                order_content: ''
             }
         }
     }
 
-    /*function getOrganisationById(id) {
+    function getOrganisationById(id) {
         if (id === 228) {
             return "AMOGUS corp."
         }
-    }*/
+    }
 
     const Offers = ({id, fetchedUser}) => {
         return (
@@ -423,8 +484,8 @@ const App = () => {
                     <PanelHeader>Заказы</PanelHeader>
                     <Spacing/>
                     <Div id={"organisation-text"}>
-                        <Headline weight={"medium"}>Организация: {db.getOrganisationById(db.getAvailableOrganisation(
-                            fetchedUser.id)[0].organisation_id).organisation_name}</Headline>
+                        <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
+                            fetchedUser.id)[0].organisation_id)}</Headline>
                     </Div>
                     <Div>
                         {}
@@ -517,20 +578,19 @@ const App = () => {
                             data-story="rests"
                             text="Организации"
                         ><Icon28NewsfeedOutline/></TabbarItem>
-                        <TabbarItem
+                        {/*<TabbarItem
                             onClick={onStoryChange}
                             selected={activeStory === 'food'}
                             data-story="food"
                             text="Еда"
-                        ><Icon28ServicesOutline/></TabbarItem>
+                        ><Icon28ServicesOutline/></TabbarItem>*/}
                         <TabbarItem
                             onClick={onStoryChange}
                             selected={activeStory === 'basket'}
                             data-story="basket"
-                            label={getAmountOfFoodInBasket()}
+                            label={<p id={'basketLabel'}>{getAmountOfFoodInBasket() !== 0 ? getAmountOfFoodInBasket() : 0}</p>}
                             text="Корзина"
                         ><Icon28MessageOutline/></TabbarItem>
-
                         {printOffersButton()}
                     </Tabbar>
                     }>
@@ -539,18 +599,18 @@ const App = () => {
                                 <PanelHeader><Title weight={"bold"} level={1}>Организации</Title></PanelHeader><Spacing
                                 size={16}/>
                                 {fetchedUser &&
-                                <Group style={{height: '1000px'}}>
+                                <Group style={{height: '1300px'}}>
                                     <Fragment>
-                                        <Search/>
-                                        <Div id="rest">
-                                            {printRests(db.getOrganisation(), goPanelRests)}
+                                        {/*<Search/>*/}
+                                        <Div id="rests">
+                                            {printRests(getOrganisation(), goPanelRests)}
                                         </Div>
                                     </Fragment>
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(db.ganisation(), goPanelRests)}
+                            {createRestsPanels(getOrganisation(), goPanelRests)}
                         </View>
-                        <View id="food" activePanel="food" popout={popout}>
+                        {/*<View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
                                 <PanelHeader><PanelHeaderContent>Еда</PanelHeaderContent></PanelHeader><Spacing/>
                                 <Group style={{height: '1000px'}}>
@@ -558,19 +618,22 @@ const App = () => {
                                     </Placeholder>
                                 </Group>
                             </Panel>
-                        </View>
+                        </View>*/}
                         <View id="basket" activePanel="basket" popout={popout}>
                             <Panel id="basket">
                                 <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader><Spacing/>
                                 <Group style={{height: '1000px'}}>
-                                    {//printBasket()
-                                    }
+                                    <Fragment>
+                                        <Div id="basket">
+                                            {printBasket(getMenu(currentOrganisationChoice))}
+                                        </Div>
+                                    </Fragment>
+                                    <Div className='OfferButton'>
+                                        <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
+                                            Сделать заказ
+                                        </CellButton>
+                                    </Div>
                                 </Group>
-                                <Div className='OfferButton'>
-                                    <CellButton mode='commerce' size='l' stretched style={{marginRight: 8}}>
-                                        Сделать заказ
-                                    </CellButton>
-                                </Div>
                             </Panel>
                         </View>
                         <View id="offers" activePanel="offers" popout={popout}>
@@ -600,7 +663,7 @@ const App = () => {
         */
     return (
         <Example/>
-    );
+    )
 }
 
 export default App;
