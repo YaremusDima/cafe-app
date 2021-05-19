@@ -548,7 +548,7 @@ const App = () => {
                                     </Fragment>
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(db.getOrganisation(), goPanelRests)}
+                            {createRestsPanels(db.ganisation(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
