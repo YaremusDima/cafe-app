@@ -35,6 +35,7 @@ import Group from "@vkontakte/vkui/dist/components/Group/Group";
 import Div from "@vkontakte/vkui/dist/components/Div/Div";
 import Header from "@vkontakte/vkui/dist/components/Header/Header";
 import tort from './img/cake.jpg'
+import cap from './img/cappucino.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
 import {object} from "prop-types";
 import * as ReactDOM from "react-dom";
@@ -127,8 +128,8 @@ const App = () => {
                         default:
                             break;
                     }
-                    //setActiveStory(ROUTES.INTRO)
-                    //setUserHasSeenIntro(false)
+                    setActiveStory(ROUTES.INTRO)
+                    setUserHasSeenIntro(false)
                 } catch (error) {
                     setSnackbar(<Snackbar
                             layout='vertical'
@@ -211,12 +212,12 @@ const App = () => {
     function getMenu(rest_id) {
         if (rest_id === 'restId1') {
             return {
-                productId1: {prodName: 'product1', prodPic: tort, prodPrice: '420P', prodOrgId: 'restId1'},
+                productId1: {prodName: 'тортик', prodPic: tort, prodPrice: '420P', prodOrgId: 'restId1'},
             }
         }
         if (rest_id === 'restId2') {
             return {
-                productId2: {prodName: 'product2', prodPic: tort, prodPrice: '69P', prodOrgId: 'restId2'}
+                productId2: {prodName: 'каппучино', prodPic: cap, prodPrice: '69P', prodOrgId: 'restId2'}
             }
         }
     };
@@ -353,10 +354,10 @@ const App = () => {
 
     function getProdName(prodId) {
         if (prodId === 'productId1') {
-            return('product1')
+            return('тортик')
         }
         if (prodId === 'productId2') {
-            return('product2')
+            return('каппучино')
         }
     }
 
@@ -369,12 +370,21 @@ const App = () => {
         }
     }
 
-    function printBasket() {    
+    function getProdPic(prodId) {
+        if (prodId === 'productId1') {
+            return(tort)
+        }
+        if (prodId === 'productId2') {
+            return(cap)
+        }
+    }
+
+    function printBasket() {
         let ans = []
         for (let food in BASKET) {
             if (BASKET[food] > 0) {
                 ans.push(
-                    <Cell expandable before={<img src={tort} height={'50'}/>} after={
+                    <Cell expandable before={<img src={getProdPic(food)} height={'50'}/>} after={
                         <Group>
                             {
                                 <SplitLayout>
