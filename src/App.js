@@ -13,7 +13,6 @@ import {
     Icon28ServicesOutline, Icon28UserCircleOutline, Icon56NewsfeedOutline
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
-import * as db from './db.js'; 
 import Intro from './panels/Intro';
 import {
     Cell, CellButton, FixedLayout, Headline,
@@ -81,21 +80,8 @@ const App = () => {
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
-
-    class AmountCheck extends React.Component {
-        change() {
-            BASKET.setState({
-                id : BASKET[props.id]
-            })
-        }
-
-        render() {
-            return (
-                <SplitLayout>
-                    <div>{BASKET[this.props.id]}</div>
-                </SplitLayout>
-            )
-        }
+    var BASKET = {
+        product1: 10
     }
 
     useEffect(() => {
@@ -209,8 +195,8 @@ const App = () => {
 
     function getMenu(rest_id) {
         return {
-            product1: {prodName: 'product', prodPic: tort, prodPrice: '420P'},
-            product2: {prodName: 'product', prodPic: tort, prodPrice: '69P'}
+            product1: {prodName: 'product1', prodPic: tort, prodPrice: '420P'},
+            product2: {prodName: 'product2', prodPic: tort, prodPrice: '69P'}
         }
     };
 
@@ -251,6 +237,7 @@ const App = () => {
         let newNumber = BASKET[prod_id]
         console.log(BASKET[prod_id])
         totCell.textContent = newNumber
+        return BASKET[prod_id];
         /*return (
             <Cell>
                 <SplitLayout>
@@ -277,7 +264,7 @@ const App = () => {
                         {
                             <SplitLayout>
                                 <Button before={<Icon16Minus/>} mode="tertiary" onClick={() => changeAmount(prop, -1)}/>
-                                <Cell id = {prop}>{BASKET[prop]}</Cell>
+                                <Cell id={prop}>{BASKET[prop]}</Cell>
                                 <Button before={<Icon16Add/>} mode="tertiary" onClick={() => changeAmount(prop, 1)}/>
                             </SplitLayout>
                         }
@@ -285,7 +272,8 @@ const App = () => {
                 }>{prods[prop]['prodName']}</Cell>
             )
 //console.log(prop)
-        };
+        }
+        ;
         return ans;
     }
 
@@ -306,13 +294,13 @@ const App = () => {
                                  separator={false}>Организации</PanelHeader>
                     <Group>
                         <Header mode={'primary'}/*aside={<img src='' alt={'пикча рестика'}>}*/>название
-                            рестика {rests[rest]['restName']}</Header>
+                            ресторана: {rests[rest]['restName']}</Header>
                         <Div>
                             описание: {rests[rest]['restDesc']}
                         </Div>
                         <Header mode={'primary'}>Меню:</Header>
                         <Div id="prod">
-                            {printProds(db.getMenu(rest))}
+                            {printProds(getMenu(rest))}
                         </Div>
                     </Group>
                 </Panel>
@@ -324,8 +312,6 @@ const App = () => {
 
     ///////////////////////////////////////////функции и переменные для работы с корзиной
 
-    var BASKET = {
-    }
 
     //addFoodToBasket("35", 10)
     //addFoodToBasket("228")
@@ -386,7 +372,7 @@ const App = () => {
     }
 
     function printOffersButton() {
-        if (db.getAvailableOrganisation(fetchedUser).length === 0) {
+        if (getAvailableOrganisation(fetchedUser).length === 0) {
             return (<></>);
         } else {
             return (<TabbarItem
@@ -410,11 +396,11 @@ const App = () => {
         }
     }
 
-    /*function getOrganisationById(id) {
+    function getOrganisationById(id) {
         if (id === 228) {
             return "AMOGUS corp."
         }
-    }*/
+    }
 
     const Offers = ({id, fetchedUser}) => {
         return (
@@ -423,8 +409,8 @@ const App = () => {
                     <PanelHeader>Заказы</PanelHeader>
                     <Spacing/>
                     <Div id={"organisation-text"}>
-                        <Headline weight={"medium"}>Организация: {db.getOrganisationById(db.getAvailableOrganisation(
-                            fetchedUser.id)[0].organisation_id).organisation_name}</Headline>
+                        <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
+                            fetchedUser.id)[0].organisation_id)}</Headline>
                     </Div>
                     <Div>
                         {}
@@ -527,7 +513,7 @@ const App = () => {
                             onClick={onStoryChange}
                             selected={activeStory === 'basket'}
                             data-story="basket"
-                            label={getAmountOfFoodInBasket()}
+                            label={getAmountOfFoodInBasket() === 0 ? null : getAmountOfFoodInBasket()}
                             text="Корзина"
                         ><Icon28MessageOutline/></TabbarItem>
 
@@ -539,16 +525,16 @@ const App = () => {
                                 <PanelHeader><Title weight={"bold"} level={1}>Организации</Title></PanelHeader><Spacing
                                 size={16}/>
                                 {fetchedUser &&
-                                <Group style={{height: '1000px'}}>
+                                <Group style={{height: '1300px'}}>
                                     <Fragment>
                                         <Search/>
                                         <Div id="rest">
-                                            {printRests(db.getOrganisation(), goPanelRests)}
+                                            {printRests(getOrganisation(), goPanelRests)}
                                         </Div>
                                     </Fragment>
                                 </Group>}
                             </Panel>
-                            {createRestsPanels(db.getOrganisation(), goPanelRests)}
+                            {createRestsPanels(getOrganisation(), goPanelRests)}
                         </View>
                         <View id="food" activePanel="food" popout={popout}>
                             <Panel id="food">
