@@ -51,6 +51,7 @@ const ROUTES = {
     INTRO: 'intro',
     FOOD: 'food',
     BASKET: 'basket',
+    ORDERS: 'orders',
     OFFERS: 'offers',
 };
 
@@ -81,7 +82,7 @@ var orderTime
 var payWay = 'nal'
 var ordersAmount = 2
 var orders = {
-    orderId1_usedId: {
+    orderId1: {
         basket: {
             productId1: 10,
             productId2: 2
@@ -92,16 +93,16 @@ var orders = {
         status: 'обрабатывается',
         organisation: 'restId1'
     },
-    orderId2_userId: {
+    orderId2: {
         basket: {
-            productId7: 3,
-            productId9: 5
+            productId5: 3,
+            productId6: 5
         },
         time: '19:20',
         payWay: 'karta',
         cost: 1488,
-        status: 'не принят',
-        organisation: 'restId4'
+        status: 'отклонен',
+        organisation: 'restId3'
     }
 }
 //ordersAmount = 0
@@ -117,7 +118,8 @@ const App = () => {
     const [activeStory, setActiveStory] = React.useState('intro');
     const [activePanelRests, setActivePanelRests] = React.useState("rests");
     const [activePanelFood, setActivePanelFood] = React.useState("food");
-    const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
+    const [activePanelOffers, setActivePanelOffers] = React.useState("offers");
+    const [activePanelOrders, setActivePanelOrders] = React.useState("orders")
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
@@ -168,7 +170,13 @@ const App = () => {
                 }
 
             });
-            setUser(user);
+            let k = 0
+            while ((user === null) && (k < 1000)) {
+                k += 1;
+            }
+            if (k < 1000) {
+                setUser(user)
+            }
             setPopout(null);
         }
 
@@ -195,6 +203,10 @@ const App = () => {
     const goPanelOffers = (panel) => {
         setActivePanelRests(panel);
     };
+
+    const goPanelOrders = (panel) => {
+        setActivePanelOrders(panel)
+    }
 
     const viewIntro = async () => {
         try {
@@ -454,7 +466,7 @@ const App = () => {
     function orderSend(basket, time, payWay, cost) {
         console.log('отправляем данные Володе')
         ordersAmount += 1
-        orders[`orderId${ordersAmount}_userId`] = {
+        orders[`orderId${ordersAmount}`] = {
             basket: basket,
             time: time,
             payWay: payWay,
@@ -557,6 +569,7 @@ const App = () => {
     }
 
     function getUsersOrders(userId) {
+        console.log('выдача ордеров юзеру' + userId)
         return (orders)
     }
 
@@ -575,8 +588,7 @@ const App = () => {
         console.log('отменяем заказ')
         delete orders[orderId]
         let orderGroup = document.getElementById(orderId)
-        orderGroup.textContent = 'Заказ отменен'
-        ordersAmount += -1
+        orderGroup.textContent = ''
     }
 
     function printStatus(orderId, order) {
@@ -591,10 +603,10 @@ const App = () => {
                 <Div>Статус заказа: <font color={'green'}>принят!</font></Div>
             )
         }
-        if (order.status === 'не принят') {
+        if (order.status === 'отклонен') {
             return (
                 <Group>
-                    <Div>Статус заказа: <font color={'red'}>заказ не принят! (выберите другое время) </font></Div>
+                    <Div>Статус заказа: <font color={'red'}>заказ отклонен! (выберите другое время) </font></Div>
                     <Div>
                         <Button mode={'primary'} onClick={() => returnToBasket(orderId, order)}>
                             Вернуть заказ в корзину
@@ -610,8 +622,9 @@ const App = () => {
 
     function printOrders(userId) {
         let ans = []
+        console.log(userId)
         let orders = getUsersOrders(userId)
-        if (ordersAmount >0 ) {
+        if (ordersAmount > 0) {
             for (let order in orders) {
                 let prodList = ' '
                 for (let prod in orders[order].basket) {
@@ -643,9 +656,8 @@ const App = () => {
                     </Group>
                 )
             }
-        }
-        else {
-            return(
+        } else {
+            return (
                 <Group>
                     <Placeholder icon={<Icon28ChefHatOutline width={56} height={56}/>}>
                     </Placeholder>
@@ -705,38 +717,39 @@ const App = () => {
 
     ////////////////////////////////////////Заказы
 
-    function getAvailableOrganisation(person_id) {
-        return [
-            {
-                person_id: person_id,
-                organisation_id: 228,
-                person_status: "gay"
+    function getAvailableOrganisation(person) {
+        let chelId = 0
+        let k = 0
+        while ((person === null) && (k < 1000)) {
+            k += 1
+        }
+        if (k < 1000) {
+            chelId = person.id
+            console.log(chelId)
+        }
+        let helpReturn = {}
+        if (chelId === 68043104) {
+            helpReturn = {
+                personId: 'userId1',
+                organisationId: 'restId4',
+                personStatus: 'armenian'
             }
-        ]
+        }
+        return (helpReturn)
     }
 
     function printOffersButton() {
-        if (getAvailableOrganisation(fetchedUser).length === 0) {
+        if (!getAvailableOrganisation(fetchedUser).hasOwnProperty('personId')) {
+            console.log('вы не админ!')
             return (<></>);
         } else {
+            console.log('вы админ!')
             return (<TabbarItem
                 onClick={onStoryChange}
                 selected={activeStory === 'offers'}
                 data-story="offers"
                 text="Заказы"
             ><Icon28ClipOutline/></TabbarItem>)
-        }
-    }
-
-    function getOrders(organisation_id) {
-        return {
-            order1_id: {
-                order_date: new Date(2011, 0, 1, 12, 0, 0, 0),
-                expectation_time: new Date(2011, 0, 1, 12, 30, 0, 0),
-                order_status: 0,
-                order_amount: 1000,
-                order_content: ''
-            }
         }
     }
 
@@ -761,6 +774,96 @@ const App = () => {
         }
     }
 
+    function getOrganisationOrders(organisationId) {
+        let orgOrders = {}
+        for (let order in orders) {
+            if (orders[order].organisation === organisationId) {
+                orgOrders[order] = orders[order]
+                console.log('найден заказ в вашей организации')
+            }
+        }
+        return orgOrders
+    }
+
+    function declineOrder(orderId, order) {
+        orders[orderId].status = 'отклонен'
+        let orderDiv = document.getElementById(`${orderId}_offers`)
+        orderDiv.textContent = 'Статус заказа: отклонен.'
+    }
+
+    function acceptOrder(orderId, order) {
+        orders[orderId].status = 'принят'
+        let orderDiv = document.getElementById(`${orderId}_offers`)
+        orderDiv.textContent = 'Статус заказа: принят.'
+    }
+
+    function printAcceptButtons(orderId, order) {
+        if (order.status === 'обрабатывается') {
+            return (
+                <Div id={`${orderId}_offers`}>
+                    <Button mode={'destructive'} onClick={() => declineOrder(orderId, order)}>Отклонить</Button>
+                    <Button mode={'commerce'} onClick={() => acceptOrder(orderId, order)}>Принять</Button>
+                </Div>
+            )
+        }
+        else {
+            return (
+                <Div id={`${orderId}_offers`}>{`Статус заказа: ${order.status}`}</Div>
+            )
+        }
+    }
+
+    function printOffers(organisationId) {
+        let ans = []
+        let orders = getOrganisationOrders(organisationId)
+        if (Object.keys(orders).length > 0) {
+            console.log('что-то есть')
+            console.log(orders)
+            for (let order in orders) {
+                let prodList = ' '
+                for (let prod in orders[order].basket) {
+                    if (orders[order].basket[prod] > 0) {
+                        prodList = prodList + getProductById(prod) + ' (' + orders[order].basket[prod] + 'шт); '
+                    }
+                }
+                console.log(prodList);
+                ans.push(
+                    <Group id={order}>
+                        <Header size={'l'}>Заказ номер: {order}</Header>
+                        <Div><font color={'grey'}>{prodList}</font></Div>
+                        <Div>Время выдачи: {orders[order].time}</Div>
+                        <Div>Стоимость заказа: {orders[order].cost}</Div>
+                        <Div>
+                            Способ оплаты:
+                            {
+                                orders[order].payWay === 'nal' ? ' наличными в ресторане' : ''
+                            }
+                            {
+                                orders[order].payWay === 'karta' ? ' картой в ресторане' : ''
+                            }
+                            {
+                                orders[order].payWay === 'online' ? ' картой онлайн' : ''
+                            }
+                        </Div>
+                        {printAcceptButtons(order, orders[order])}
+                    </Group>
+                )
+            }
+        } else {
+            console.log('ничего нет')
+            return (
+                <Group>
+                    <Placeholder icon={<Icon28ChefHatOutline width={56} height={56}/>}>
+                    </Placeholder>
+                    <p align={'center'}>На данный момент заказов не поступало.</p>
+                </Group>
+            )
+        }
+        ;
+        console.log('под конец')
+        return ans;
+    }
+
     const Offers = (
         {
             id, fetchedUser
@@ -768,16 +871,40 @@ const App = () => {
     ) => {
         return (
             <Panel id="offers">
-                <Group style={{height: '1000px'}}>
-                    <PanelHeader>Заказы</PanelHeader>
-                    <Spacing/>
-                    <Div id={"organisation-text"}>
-                        <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
-                            fetchedUser.id)[0].organisation_id)}</Headline>
-                    </Div>
-                    <Div>
-                        {}
-                    </Div>
+                <PanelHeader>Заказы</PanelHeader><Spacing/>
+                <Group>
+                    <Fragment>
+                        <Div id={"organisation-text"}>
+                            <Headline weight={"medium"}>Организация: {getOrganisationById(getAvailableOrganisation(
+                                fetchedUser)['organisationId'])}</Headline>
+                        </Div>
+                        <Div>
+                            {printOffers(getAvailableOrganisation(
+                                fetchedUser)['organisationId'])}
+                        </Div>
+                    </Fragment>
+                    <Spacing size={16}/>
+                </Group>
+            </Panel>
+        )
+    }
+
+    const Orders = (
+        {
+            id, fetchedUser
+        }
+    ) => {
+        return (
+            <Panel id="orders">
+                <PanelHeader><PanelHeaderContent>Ваши
+                    заказы</PanelHeaderContent></PanelHeader><Spacing/>
+                <Group>
+                    <Fragment>
+                        <Div id={'ordersDiv'}>
+                            {printOrders(fetchedUser.id)}
+                        </Div>
+                    </Fragment>
+                    <Spacing size={16}/>
                 </Group>
             </Panel>
         )
@@ -816,18 +943,6 @@ const App = () => {
                                         feed
                                     </Cell>
                                     <Cell
-                                        disabled={activeStory === 'food'}
-                                        style={activeStory === 'food' ? {
-                                            backgroundColor: "var(--button_secondary_background)",
-                                            borderRadius: 8
-                                        } : {}}
-                                        data-story="food"
-                                        onClick={onStoryChange}
-                                        before={<Icon28ServicesOutline/>}
-                                    >
-                                        services
-                                    </Cell>
-                                    <Cell
                                         disabled={activeStory === 'basket'}
                                         style={activeStory === 'basket' ? {
                                             backgroundColor: "var(--button_secondary_background)",
@@ -838,6 +953,18 @@ const App = () => {
                                         before={<Icon28MessageOutline/>}
                                     >
                                         messages
+                                    </Cell>
+                                    <Cell
+                                        disabled={activeStory === 'orders'}
+                                        style={activeStory === 'orders' ? {
+                                            backgroundColor: "var(--button_secondary_background)",
+                                            borderRadius: 8
+                                        } : {}}
+                                        data-story="orders"
+                                        onClick={onStoryChange}
+                                        before={<Icon28ServicesOutline/>}
+                                    >
+                                        services
                                     </Cell>
                                     <Cell
                                         disabled={activeStory === 'offers'}
@@ -893,7 +1020,7 @@ const App = () => {
                                                         level={1}>Организации</Title></PanelHeader><Spacing
                                     size={16}/>
                                     {fetchedUser &&
-                                    <Group style={{height: '1300px'}}>
+                                    <Group>
                                         <Fragment>
                                             {/*<Search/>*/}
                                             <Div id="rests">
@@ -907,7 +1034,7 @@ const App = () => {
                             <View id="basket" activePanel="basket" popout={popout}>
                                 <Panel id="basket">
                                     <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader><Spacing/>
-                                    <Group style={{height: '1000px'}}>
+                                    <Group>
                                         <Fragment>
                                             <Div id="basketDiv">
                                                 {printBasket(getMenu(currentOrganisationChoice))}
@@ -917,17 +1044,7 @@ const App = () => {
                                 </Panel>
                             </View>
                             <View id="orders" activePanel="orders" popout={popout}>
-                                <Panel id="orders">
-                                    <PanelHeader><PanelHeaderContent>Ваши
-                                        заказы</PanelHeaderContent></PanelHeader><Spacing/>
-                                    <Group style={{height: '1000px'}}>
-                                        <Fragment>
-                                            <Div id={'ordersDiv'}>
-                                                {printOrders('userId1')}
-                                            </Div>
-                                        </Fragment>
-                                    </Group>
-                                </Panel>
+                                <Orders id={ROUTES.ORDERS} fetchedUser={fetchedUser}/>
                             </View>
                             <View id="offers" activePanel="offers" popout={popout}>
                                 <Offers id={ROUTES.OFFERS} fetchedUser={fetchedUser}/>
