@@ -22,10 +22,8 @@
   "dependencies": {
     "@vkontakte/icons": "^1.97.0",
     "@vkontakte/vk-bridge": "^2.4.1",
-    "@vkontakte/vk-miniapps-deploy": "0.0.17",
     "@vkontakte/vkjs": "^0.20.0",
     "@vkontakte/vkui": "^4.6.0",
-    "babel-eslint": "^10.1.0",
     "chalk": "^2.4.2",
     "core-js": "^3.9.1",
     "eruda": "^2.2.0",
@@ -33,7 +31,6 @@
     "eruda-dom": "^2.0.0",
     "icons": "^1.0.0",
     "jest-runtime": "^26.6.3",
-    "pg": "^8.6.0",
     "prop-types": "^15.7.2",
     "react": "^16.14.0",
     "react-dom": "^16.14.0"
