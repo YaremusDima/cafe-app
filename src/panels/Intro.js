@@ -1,0 +1,44 @@
+import React, {Fragment} from 'react';
+
+import {Panel} from '@vkontakte/vkui';
+import PanelHeader from '@vkontakte/vkui/dist/components/PanelHeader/PanelHeader';
+
+import './Intro.css';
+import Group from "@vkontakte/vkui/dist/components/Group/Group";
+import Div from "@vkontakte/vkui/dist/components/Div/Div";
+import Avatar from "@vkontakte/vkui/dist/components/Avatar/Avatar";
+import FixedLayout from '@vkontakte/vkui/dist/components/FixedLayout/FixedLayout';
+import Button from "@vkontakte/vkui/dist/components/Button/Button";
+
+
+const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go, route}) => {
+	return (
+        <Panel id={id} centered={true}>
+            <PanelHeader>
+                Кофе и что угодно
+            </PanelHeader>
+            {(!userHasSeenIntro && fetchedUser) &&
+                <Fragment>
+                    <Group>
+                        <Div className='User'>
+                            {fetchedUser.photo_200 && <Avatar src={fetchedUser.photo_200}/>}
+                            <h2>Привет, {fetchedUser.first_name}!</h2>
+                            <h3>Это приложение поможет тебе сэкономить время на очередях! Просто закажи кофе или что угодно занарее ;)</h3>
+                        </Div>
+                    </Group>
+                    <FixedLayout vertical='bottom' style={{height:'110px'}}>
+                        <Div className='OkButton'>
+                            <Button mode='commerce' size='l' stretched style={{ marginRight: 8 }} onClick={() => go(route)}>
+                                OK, всё понятно!
+                            </Button>
+                        </Div>
+                    </FixedLayout>
+                </Fragment>
+
+            }
+            {snackbarError}
+        </Panel>
+    )
+};
+
+export default Intro;
