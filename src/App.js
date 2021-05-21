@@ -4,22 +4,21 @@ import View from '@vkontakte/vkui/dist/components/View/View';
 import ScreenSpinner from '@vkontakte/vkui/dist/components/ScreenSpinner/ScreenSpinner';
 import Avatar from '@vkontakte/vkui/dist/components/Avatar/Avatar';
 import {
-    Icon16Add, Icon16Minus, Icon20HomeOutline,
+    Icon16Add, Icon16Minus,
     Icon24Error,
-    Icon28ClipOutline, Icon28HomeOutline,
+    Icon28ClipOutline,
     Icon28MessageOutline,
     Icon28NewsfeedOutline,
     Icon28ServicesOutline,
     Icon28AppleOutline,
     Icon28ChefHatOutline,
-    Icon28UserCircleOutline, Icon56NewsfeedOutline
 } from '@vkontakte/icons';
 import '@vkontakte/vkui/dist/vkui.css';
 import Intro from './panels/Intro';
 import {
-    Cell, CellButton, CustomSelectOption, FixedLayout, FormItem, FormLayout, Headline, Input,
-    Panel, PanelHeaderBack, PanelHeaderClose, PanelHeaderContent,
-    Placeholder, PopoutWrapper, Search, Select,
+    Cell, FormItem, FormLayout, Headline,
+    Panel, PanelHeaderBack, PanelHeaderContent,
+    Placeholder,
     Snackbar, Spacing,
     SplitCol,
     SplitLayout,
@@ -29,22 +28,20 @@ import {
     withAdaptivity
 } from "@vkontakte/vkui";
 import * as PropTypes from "prop-types";
-import Rests from "./panels/Rests";
 import {Epic} from "@vkontakte/vkui/dist/components/Epic/Epic";
 import PanelHeader from "@vkontakte/vkui/dist/components/PanelHeader/PanelHeader";
 import Group from "@vkontakte/vkui/dist/components/Group/Group";
 import Div from "@vkontakte/vkui/dist/components/Div/Div";
 import Header from "@vkontakte/vkui/dist/components/Header/Header";
-import tort from './img/cake.jpg'
-import cap from './img/cappucino.jpg'
+//import tort from './img/cake.jpg'
+//import cap from './img/cappucino.jpg'
 import zachet from './img/zachet.jpg'
 import ardis from './img/ardis.jpg'
 import boltay from './img/boltay.jpg'
 import nk from './img/nk.jpg'
 import fsh from './img/fsh.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
-import {object} from "prop-types";
-import * as ReactDOM from "react-dom";
+//import {object} from "prop-types";
 
 const ROUTES = {
     RESTS: 'rests',
@@ -113,8 +110,6 @@ const App = () => {
     const [activePanelOffers, setActivePanelOffers] = React.useState("offers");
     const [activePanelOrders, setActivePanelOrders] = React.useState("orders")
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
-    var isOgranizator = false;
-    var _user;
 
     useEffect(() => {
         bridge.subscribe(({detail: {type, data}}) => {
@@ -719,7 +714,7 @@ const App = () => {
             console.log(chelId)
         }
         let helpReturn = {}
-        if (chelId === 68043104) {
+        if (chelId === 365257180) {
             helpReturn = {
                 personId: 'userId1',
                 organisationId: 'restId4',
