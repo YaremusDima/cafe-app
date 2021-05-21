@@ -15,7 +15,7 @@ const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go, route}) =>
 	return (
         <Panel id={id} centered={true}>
             <PanelHeader>
-                Cafe-app
+                Кофе и что угодно
             </PanelHeader>
             {(!userHasSeenIntro && fetchedUser) &&
                 <Fragment>
@@ -23,7 +23,7 @@ const Intro = ({id, snackbarError, fetchedUser, userHasSeenIntro, go, route}) =>
                         <Div className='User'>
                             {fetchedUser.photo_200 && <Avatar src={fetchedUser.photo_200}/>}
                             <h2>Привет, {fetchedUser.first_name}!</h2>
-                            <h3>Этот сервис помогает купить заранее к определенному времени кофе или еду в ресторанах</h3>
+                            <h3>Это приложение поможет тебе сэкономить время на очередях! Просто закажи кофе или что угодно занарее ;)</h3>
                         </Div>
                     </Group>
                     <FixedLayout vertical='bottom' style={{height:'110px'}}>

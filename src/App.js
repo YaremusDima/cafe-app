@@ -149,8 +149,8 @@ const App = () => {
                         default:
                             break;
                     }
-                    //setActiveStory(ROUTES.INTRO)
-                    //setUserHasSeenIntro(false)
+                    setActiveStory(ROUTES.INTRO)
+                    setUserHasSeenIntro(false)
                 } catch (error) {
                     setSnackbar(<Snackbar
                             layout='vertical'
@@ -355,19 +355,17 @@ const App = () => {
                     labelCell.textContent = `${getAmountOfFoodInBasket()}`
                 }
             } else {
-                {
-                    setSnackbar(<Snackbar
-                            layout='vertical'
-                            onClose={() => setSnackbar(null)}
-                            before={
-                                <Icon24Error fill='#fff' width='100' height='100'/>
-                            }
-                            duration={988}
-                        >
-                            В корзину можно одновременно добавлять товары только из одного ресторана!
-                        </Snackbar>
-                    );
-                }
+                setSnackbar(<Snackbar
+                        layout='vertical'
+                        onClose={() => setSnackbar(null)}
+                        before={
+                            <Icon24Error fill='#fff' width='100' height='100'/>
+                        }
+                        duration={988}
+                    >
+                        В корзину можно одновременно добавлять товары только из одного ресторана!
+                    </Snackbar>
+                );
                 alert('В корзину можно одновременно добавлять товары только из одного ресторана!')
             }
         }
@@ -444,8 +442,8 @@ const App = () => {
                 <Panel id={rest}>
                     <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}
                                  separator={false}>Организации</PanelHeader>
-                    <Group header = {<Header mode={'primary'}><b><big>
-                            {rests[rest]['restName']}</big></b></Header>}>
+                    <Group header={<Header mode={'primary'}><b><big>
+                        {rests[rest]['restName']}</big></b></Header>}>
                         <Div><em>
                             {rests[rest]['restDesc']}
                         </em></Div>
@@ -1079,4 +1077,3 @@ const App = () => {
 }
 
 export default App;
-
