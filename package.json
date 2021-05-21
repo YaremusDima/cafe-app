@@ -5,7 +5,7 @@
   "main": "index.js",
   "homepage": "./",
   "scripts": {
-    "start": "cross-env PORT=10888 HTTPS=true react-scripts start",
+    "start": "cross-env PORT=10888 HTTPS=true  SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
