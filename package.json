@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "homepage": "./",
+  "homepage": "https://yadimaseks.github.io/cafe-app/",
   "scripts": {
     "start": "cross-env PORT=10888 HTTPS=true  SKIP_PREFLIGHT_CHECK=true react-scripts start",
     "build": "react-scripts build",
@@ -29,19 +29,20 @@
     "react-dom": "^16.8.6 || ^17.0.0"
   },
   "dependencies": {
-    "@vkontakte/icons": "^1.97.0",
-    "@vkontakte/vk-bridge": "^2.4.1",
+    "@vkontakte/icons": "^1.91.0",
+    "@vkontakte/vk-bridge": "^2.0.2",
     "@vkontakte/vkjs": "^0.20.0",
     "@vkontakte/vkui": "^4.7.0",
+    "atob": "^2.1.2",
     "chalk": "^2.4.2",
     "core-js": "^3.9.1",
     "eruda": "^2.2.0",
     "eruda-code": "^2.0.0",
     "eruda-dom": "^2.0.0",
     "jest-runtime": "^26.6.3",
-    "prop-types": "^15.7.2",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "prop-types": "^15.6.1",
+    "react": "^16.8.6 || ^17.0.0",
+    "react-dom": "^16.8.6 || ^17.0.0"
   },
   "browserslist": {
     "production": [
