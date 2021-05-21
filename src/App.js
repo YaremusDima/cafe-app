@@ -43,8 +43,8 @@ import PanelHeader from "@vkontakte/vkui/dist/components/PanelHeader/PanelHeader
 import Group from "@vkontakte/vkui/dist/components/Group/Group";
 import Div from "@vkontakte/vkui/dist/components/Div/Div";
 import Header from "@vkontakte/vkui/dist/components/Header/Header";
-//import tort from './img/cake.jpg'
-//import cap from './img/cappucino.jpg'
+import tort from './img/cake.jpg'
+import cap from './img/cappucino.jpg'
 import zachet from './img/zachet.jpg'
 import ardis from './img/ardis.jpg'
 import boltay from './img/boltay.jpg'
