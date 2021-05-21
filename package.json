@@ -19,11 +19,20 @@
     "react-hot-loader": "^4.9.0",
     "react-scripts": "^2.1.8"
   },
+  "peerDependencies": {
+    "@babel/runtime": "^7.5.5",
+    "@vkontakte/icons": "^1.91.0",
+    "@vkontakte/vk-bridge": "^2.0.2",
+    "@vkontakte/vkjs": "^0.20.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.8.6 || ^17.0.0",
+    "react-dom": "^16.8.6 || ^17.0.0"
+  },
   "dependencies": {
     "@vkontakte/icons": "^1.97.0",
     "@vkontakte/vk-bridge": "^2.4.1",
     "@vkontakte/vkjs": "^0.20.0",
-    "@vkontakte/vkui": "^4.6.0",
+    "@vkontakte/vkui": "^4.7.0",
     "chalk": "^2.4.2",
     "core-js": "^3.9.1",
     "eruda": "^2.2.0",

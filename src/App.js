@@ -444,9 +444,8 @@ const App = () => {
                 <Panel id={rest}>
                     <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}
                                  separator={false}>Организации</PanelHeader>
-                    <Group style={{height: '1000px'}}>
-                        <Header mode={'primary'}><b><big>
-                            {rests[rest]['restName']}</big></b></Header>
+                    <Group header = {<Header mode={'primary'}><b><big>
+                            {rests[rest]['restName']}</big></b></Header>}>
                         <Div><em>
                             {rests[rest]['restDesc']}
                         </em></Div>
@@ -909,15 +908,11 @@ const App = () => {
         )
     }
 
-    const Example = withAdaptivity((
-        {
-            viewWidth
-        }
-        ) => {
+    const Example = withAdaptivity(({viewWidth}) => {
             const platform = usePlatform();
             const isDesktop = viewWidth >= ViewWidth.TABLET;
             const hasHeader = platform !== VKCOM;
-
+            console.log(isDesktop)
             return (
                 <AppRoot>
                     <SplitLayout
