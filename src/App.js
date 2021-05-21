@@ -66,14 +66,6 @@ Snackbar.propTypes = {
     children: PropTypes.node
 };
 
-function getIdRests() {
-    return ['1', '2', '3', '5']
-}
-
-function generateRestsPanels() {
-
-}
-
 var BASKET = {}
 var currentOrganisationChoice = ''
 var basketCost = 0
@@ -116,8 +108,6 @@ const App = () => {
     const [snackbar, setSnackbar] = useState(null);
     const [activeStory, setActiveStory] = React.useState('intro');
     const [activePanelRests, setActivePanelRests] = React.useState("rests");
-    const [activePanelFood, setActivePanelFood] = React.useState("food");
-    const [activePanelOffers, setActivePanelOffers] = React.useState("rests");
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
     var isOgranizator = false;
     var _user;
@@ -181,18 +171,6 @@ const App = () => {
     };
 
     const goPanelRests = (panel) => {
-        setActivePanelRests(panel);
-    };
-
-    const goPanelFood = (panel) => {
-        setActivePanelRests(panel);
-    };
-
-    const goPanelBasket = (panel) => {
-        setActivePanelRests(panel);
-    };
-
-    const goPanelOffers = (panel) => {
         setActivePanelRests(panel);
     };
 
@@ -342,7 +320,7 @@ const App = () => {
                     labelCell.textContent = `${getAmountOfFoodInBasket()}`
                 }
             } else {
-                {/*setSnackbar(<Snackbar
+                {setSnackbar(<Snackbar
                         layout='vertical'
                         onClose={() => setSnackbar(null)}
                         before={
@@ -352,7 +330,7 @@ const App = () => {
                     >
                         В корзину можно одновременно добавлять товары только из одного ресторана!
                     </Snackbar>
-                );*/
+                );
                 }
                 alert('В корзину можно одновременно добавлять товары только из одного ресторана!')
             }

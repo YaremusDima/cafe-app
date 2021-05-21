@@ -17,7 +17,7 @@
     "cross-env": "^5.2.0",
     "gh-pages": "^3.1.0",
     "react-hot-loader": "^4.9.0",
-    "react-scripts": "^4.0.1"
+    "react-scripts": "^2.1.8"
   },
   "dependencies": {
     "@vkontakte/icons": "^1.97.0",
@@ -32,10 +32,11 @@
     "eruda-code": "^2.0.0",
     "eruda-dom": "^2.0.0",
     "icons": "^1.0.0",
+    "jest-runtime": "^26.6.3",
     "pg": "^8.6.0",
     "prop-types": "^15.7.2",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0"
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
   },
   "browserslist": {
     "production": [
