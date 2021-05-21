@@ -16,10 +16,11 @@ import {
 import '@vkontakte/vkui/dist/vkui.css';
 import Intro from './panels/Intro';
 import {
-    Cell, FormItem, FormLayout, Headline,
+    AdaptivityProvider, AppRoot,
+    Cell, ConfigProvider, FormItem, FormLayout, Headline,
     Panel, PanelHeaderBack, PanelHeaderContent,
     Placeholder,
-    Snackbar, Spacing,
+    Snackbar,
     SplitCol,
     SplitLayout,
     Tabbar,
@@ -340,17 +341,18 @@ const App = () => {
                     labelCell.textContent = `${getAmountOfFoodInBasket()}`
                 }
             } else {
-                {setSnackbar(<Snackbar
-                        layout='vertical'
-                        onClose={() => setSnackbar(null)}
-                        before={
-                            <Icon24Error fill='#fff' width='100' height='100'/>
-                        }
-                        duration={988}
-                    >
-                        В корзину можно одновременно добавлять товары только из одного ресторана!
-                    </Snackbar>
-                );
+                {
+                    setSnackbar(<Snackbar
+                            layout='vertical'
+                            onClose={() => setSnackbar(null)}
+                            before={
+                                <Icon24Error fill='#fff' width='100' height='100'/>
+                            }
+                            duration={988}
+                        >
+                            В корзину можно одновременно добавлять товары только из одного ресторана!
+                        </Snackbar>
+                    );
                 }
                 alert('В корзину можно одновременно добавлять товары только из одного ресторана!')
             }
@@ -427,10 +429,9 @@ const App = () => {
             res.push(
                 <Panel id={rest}>
                     <PanelHeader left={<PanelHeaderBack onClick={() => go("rests")}/>}
-                                 separator={false}>Организации</PanelHeader><Spacing size={16}/>
-                    <Group style={{height: '1000px'}}>
-                        <Header mode={'primary'}><b><big>
-                            {rests[rest]['restName']}</big></b></Header>
+                                 separator={false}>Организации</PanelHeader>
+                    <Group header = {<Header mode={'primary'}><b><big>
+                            {rests[rest]['restName']}</big></b></Header>}>
                         <Div><em>
                             {rests[rest]['restDesc']}
                         </em></Div>
@@ -791,8 +792,7 @@ const App = () => {
                     <Button mode={'commerce'} onClick={() => acceptOrder(orderId, order)}>Принять</Button>
                 </Div>
             )
-        }
-        else {
+        } else {
             return (
                 <Div id={`${orderId}_offers`}>{`Статус заказа: ${order.status}`}</Div>
             )
@@ -857,7 +857,7 @@ const App = () => {
     ) => {
         return (
             <Panel id="offers">
-                <PanelHeader>Заказы</PanelHeader><Spacing/>
+                <PanelHeader>Заказы</PanelHeader>
                 <Group>
                     <Fragment>
                         <Div id={"organisation-text"}>
@@ -869,7 +869,6 @@ const App = () => {
                                 fetchedUser)['organisationId'])}
                         </Div>
                     </Fragment>
-                    <Spacing size={16}/>
                 </Group>
             </Panel>
         )
@@ -883,166 +882,161 @@ const App = () => {
         return (
             <Panel id="orders">
                 <PanelHeader><PanelHeaderContent>Ваши
-                    заказы</PanelHeaderContent></PanelHeader><Spacing/>
+                    заказы</PanelHeaderContent></PanelHeader>
                 <Group>
                     <Fragment>
                         <Div id={'ordersDiv'}>
                             {printOrders(fetchedUser.id)}
                         </Div>
                     </Fragment>
-                    <Spacing size={16}/>
                 </Group>
             </Panel>
         )
     }
 
-    const Example = withAdaptivity((
-        {
-            viewWidth
-        }
-        ) => {
+    const Example = withAdaptivity(({viewWidth}) => {
             const platform = usePlatform();
             const isDesktop = viewWidth >= ViewWidth.TABLET;
             const hasHeader = platform !== VKCOM;
-
+            console.log(isDesktop)
             return (
-
-                <SplitLayout
-                    header={hasHeader && <PanelHeader separator={false}/>}
-                    style={{justifyContent: "center"}}
-                >
-                    {isDesktop && (
-                        <SplitCol fixed width="280px" maxWidth="280px">
-                            <Panel>
-                                {hasHeader && <PanelHeader/>}
-                                <Group>
-                                    <Cell
-                                        disabled={activeStory === 'rests'}
-                                        style={activeStory === 'rests' ? {
-                                            backgroundColor: "var(--button_secondary_background)",
-                                            borderRadius: 8
-                                        } : {}}
-                                        data-story="rests"
-                                        onClick={onStoryChange}
-                                        before={<Icon28NewsfeedOutline/>}
-                                    >
-                                        feed
-                                    </Cell>
-                                    <Cell
-                                        disabled={activeStory === 'basket'}
-                                        style={activeStory === 'basket' ? {
-                                            backgroundColor: "var(--button_secondary_background)",
-                                            borderRadius: 8
-                                        } : {}}
-                                        data-story="basket"
-                                        onClick={onStoryChange}
-                                        before={<Icon28MessageOutline/>}
-                                    >
-                                        messages
-                                    </Cell>
-                                    <Cell
-                                        disabled={activeStory === 'orders'}
-                                        style={activeStory === 'orders' ? {
-                                            backgroundColor: "var(--button_secondary_background)",
-                                            borderRadius: 8
-                                        } : {}}
-                                        data-story="orders"
-                                        onClick={onStoryChange}
-                                        before={<Icon28ServicesOutline/>}
-                                    >
-                                        services
-                                    </Cell>
-                                    <Cell
-                                        disabled={activeStory === 'offers'}
-                                        style={activeStory === 'offers' ? {
-                                            backgroundColor: "var(--button_secondary_background)",
-                                            borderRadius: 8
-                                        } : {}}
-                                        data-story="offers"
-                                        onClick={onStoryChange}
-                                        before={<Icon28ClipOutline/>}
-                                    >
-                                        clips
-                                    </Cell>
-                                </Group>
-                            </Panel>
-                        </SplitCol>
-                    )}
-
-                    <SplitCol
-                        animate={!isDesktop}
-                        spaced={isDesktop}
-                        width={isDesktop ? '560px' : '100%'}
-                        maxWidth={isDesktop ? '560px' : '100%'}
+                <AppRoot>
+                    <SplitLayout
+                        header={hasHeader && <PanelHeader separator={false}/>}
+                        style={{justifyContent: "center"}}
                     >
-                        <Epic activeStory={activeStory} tabbar={!isDesktop &&
-                        <Tabbar>
-                            <TabbarItem
-                                onClick={onStoryChange}
-                                selected={activeStory === 'rests'}
-                                data-story="rests"
-                                text="Организации"
-                            ><Icon28NewsfeedOutline/></TabbarItem>
-                            <TabbarItem
-                                onClick={onStoryChange}
-                                selected={activeStory === 'basket'}
-                                data-story="basket"
-                                label={<p
-                                    id={'basketLabel'}>{getAmountOfFoodInBasket() !== 0 ? getAmountOfFoodInBasket() : 0}</p>}
-                                text="Корзина"
-                            ><Icon28MessageOutline/></TabbarItem>
-                            <TabbarItem
-                                onClick={onStoryChange}
-                                selected={activeStory === 'orders'}
-                                data-story="orders"
-                                text="Заказы"
-                            ><Icon28ServicesOutline/></TabbarItem>
-                            {printOffersButton()}
-                        </Tabbar>
-                        }>
-                            <View id="rests" activePanel={activePanelRests} popout={popout}>
-                                <Panel id="rests">
-                                    <PanelHeader><Title weight={"bold"}
-                                                        level={1}>Организации</Title></PanelHeader><Spacing
-                                    size={16}/>
-                                    {fetchedUser &&
+                        {isDesktop && (
+                            <SplitCol fixed width="280px" maxWidth="280px">
+                                <Panel>
+                                    {hasHeader && <PanelHeader/>}
                                     <Group>
-                                        <Fragment>
+                                        <Cell
+                                            disabled={activeStory === 'rests'}
+                                            style={activeStory === 'rests' ? {
+                                                backgroundColor: "var(--button_secondary_background)",
+                                                borderRadius: 8
+                                            } : {}}
+                                            data-story="rests"
+                                            onClick={onStoryChange}
+                                            before={<Icon28NewsfeedOutline/>}
+                                        >
+                                            feed
+                                        </Cell>
+                                        <Cell
+                                            disabled={activeStory === 'basket'}
+                                            style={activeStory === 'basket' ? {
+                                                backgroundColor: "var(--button_secondary_background)",
+                                                borderRadius: 8
+                                            } : {}}
+                                            data-story="basket"
+                                            onClick={onStoryChange}
+                                            before={<Icon28MessageOutline/>}
+                                        >
+                                            messages
+                                        </Cell>
+                                        <Cell
+                                            disabled={activeStory === 'orders'}
+                                            style={activeStory === 'orders' ? {
+                                                backgroundColor: "var(--button_secondary_background)",
+                                                borderRadius: 8
+                                            } : {}}
+                                            data-story="orders"
+                                            onClick={onStoryChange}
+                                            before={<Icon28ServicesOutline/>}
+                                        >
+                                            services
+                                        </Cell>
+                                        <Cell
+                                            disabled={activeStory === 'offers'}
+                                            style={activeStory === 'offers' ? {
+                                                backgroundColor: "var(--button_secondary_background)",
+                                                borderRadius: 8
+                                            } : {}}
+                                            data-story="offers"
+                                            onClick={onStoryChange}
+                                            before={<Icon28ClipOutline/>}
+                                        >
+                                            clips
+                                        </Cell>
+                                    </Group>
+                                </Panel>
+                            </SplitCol>
+                        )}
+
+                        <SplitCol
+                            animate={!isDesktop}
+                            spaced={isDesktop}
+                            width={isDesktop ? '560px' : '100%'}
+                            maxWidth={isDesktop ? '560px' : '100%'}
+                        >
+                            <Epic activeStory={activeStory} tabbar={!isDesktop &&
+                            <Tabbar>
+                                <TabbarItem
+                                    onClick={onStoryChange}
+                                    selected={activeStory === 'rests'}
+                                    data-story="rests"
+                                    text="Организации"
+                                ><Icon28NewsfeedOutline/></TabbarItem>
+                                <TabbarItem
+                                    onClick={onStoryChange}
+                                    selected={activeStory === 'basket'}
+                                    data-story="basket"
+                                    label={<p
+                                        id={'basketLabel'}>{getAmountOfFoodInBasket() !== 0 ? getAmountOfFoodInBasket() : 0}</p>}
+                                    text="Корзина"
+                                ><Icon28MessageOutline/></TabbarItem>
+                                <TabbarItem
+                                    onClick={onStoryChange}
+                                    selected={activeStory === 'orders'}
+                                    data-story="orders"
+                                    text="Заказы"
+                                ><Icon28ServicesOutline/></TabbarItem>
+                                {printOffersButton()}
+                            </Tabbar>
+                            }>
+                                <View id="rests" activePanel={activePanelRests} popout={popout}>
+                                    <Panel id="rests">
+                                        <PanelHeader><Title weight={"bold"}
+                                                            level={1}>Организации</Title></PanelHeader>
+                                        {fetchedUser &&
+                                        <Group mode='plain'>
+
                                             {/*<Search/>*/}
                                             <Div id="rests">
                                                 {printRests(getOrganisation(), goPanelRests)}
                                             </Div>
-                                        </Fragment>
-                                    </Group>}
-                                </Panel>
-                                {createRestsPanels(getOrganisation(), goPanelRests)}
-                            </View>
-                            <View id="basket" activePanel="basket" popout={popout}>
-                                <Panel id="basket">
-                                    <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader><Spacing/>
-                                    <Group>
-                                        <Fragment>
-                                            <Div id="basketDiv">
-                                                {printBasket(getMenu(currentOrganisationChoice))}
-                                            </Div>
-                                        </Fragment>
-                                    </Group>
-                                </Panel>
-                            </View>
-                            <View id="orders" activePanel="orders" popout={popout}>
-                                <Orders id={ROUTES.ORDERS} fetchedUser={fetchedUser}/>
-                            </View>
-                            <View id="offers" activePanel="offers" popout={popout}>
-                                <Offers id={ROUTES.OFFERS} fetchedUser={fetchedUser}/>
-                            </View>
-                            <View id="intro" activePanel="intro" popout={popout}>
-                                <Intro id={ROUTES.INTRO} fetchedUser={fetchedUser} go={viewIntro}
-                                       snackbarError={snackbar}
-                                       userHasSeenIntro={userHasSeenIntro} route={ROUTES.RESTS}/>
-                            </View>
-                        </Epic>
-                    </SplitCol>
-                </SplitLayout>
+
+                                        </Group>}
+                                    </Panel>
+                                    {createRestsPanels(getOrganisation(), goPanelRests)}
+                                </View>
+                                <View id="basket" activePanel="basket" popout={popout}>
+                                    <Panel id="basket">
+                                        <PanelHeader><PanelHeaderContent>Корзина</PanelHeaderContent></PanelHeader>
+                                        <Group>
+                                            <Fragment>
+                                                <Div id="basketDiv">
+                                                    {printBasket(getMenu(currentOrganisationChoice))}
+                                                </Div>
+                                            </Fragment>
+                                        </Group>
+                                    </Panel>
+                                </View>
+                                <View id="orders" activePanel="orders" popout={popout}>
+                                    <Orders id={ROUTES.ORDERS} fetchedUser={fetchedUser}/>
+                                </View>
+                                <View id="offers" activePanel="offers" popout={popout}>
+                                    <Offers id={ROUTES.OFFERS} fetchedUser={fetchedUser}/>
+                                </View>
+                                <View id="intro" activePanel="intro" popout={popout}>
+                                    <Intro id={ROUTES.INTRO} fetchedUser={fetchedUser} go={viewIntro}
+                                           snackbarError={snackbar}
+                                           userHasSeenIntro={userHasSeenIntro} route={ROUTES.RESTS}/>
+                                </View>
+                            </Epic>
+                        </SplitCol>
+                    </SplitLayout>
+                </AppRoot>
             );
         }
         ,
@@ -1062,8 +1056,11 @@ const App = () => {
         </View>
     */
     return (
-        <Example/>
-    )
+        <ConfigProvider>
+            <AdaptivityProvider>
+                <Example/>
+            </AdaptivityProvider>
+        </ConfigProvider>)
 }
 
 export default App;
