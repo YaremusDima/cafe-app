@@ -254,10 +254,3 @@ function getOrderStatus(id){
     const query = `select status_description from "Order" right join Order_status on "Order".order_status = Order_status.order_status where order_id =  ${id}`;
     return runQuery(query);
 }
-
-// console.log(getProduct());
-
-
-
-
-
