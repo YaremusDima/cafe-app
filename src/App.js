@@ -11,11 +11,8 @@ import {
     Icon28MessageOutline,
     Icon28NewsfeedOutline,
     Icon28ServicesOutline,
-    Icon28AppleOutline,
     Icon28ChefHatOutline,
-    Icon28ArticleOutline,
     Icon28BoxHeartOutline,
-    Icon28LocationMapOutline,
     Icon28StorefrontOutline,
     Icon28WalletOutline,
     Icon28MarketSlashOutline,
@@ -51,7 +48,6 @@ import boltay from './img/boltay.jpg'
 import nk from './img/nk.jpg'
 import fsh from './img/fsh.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
-//import {object} from "prop-types";
 
 const ROUTES = {
     RESTS: 'rests',
@@ -81,6 +77,7 @@ var orderTime
 var payWay = 'nal'
 var ordersAmount = 2
 var orders = {}
+
 /* orderId1: {
      basket: {
          productId1: 10,
@@ -104,8 +101,7 @@ var orders = {}
      organisation: 'restId3'
  }
 }*/
-//ordersAmount = 0
-//orders = []
+//ordersAmount = 2
 
 //для payWay возможны три варианта: наличные в ресторане - nal; карта в ресторане - karta; карта онлайн - online
 
@@ -116,9 +112,6 @@ const App = () => {
     const [snackbar, setSnackbar] = useState(null);
     const [activeStory, setActiveStory] = React.useState('intro');
     const [activePanelRests, setActivePanelRests] = React.useState("rests");
-    const [activePanelFood, setActivePanelFood] = React.useState("food");
-    const [activePanelOffers, setActivePanelOffers] = React.useState("offers");
-    const [activePanelOrders, setActivePanelOrders] = React.useState("orders")
     const onStoryChange = (e) => setActiveStory(e.currentTarget.dataset.story);
 
     useEffect(() => {
@@ -129,7 +122,7 @@ const App = () => {
                 document.body.attributes.setNamedItem(schemeAttribute);
             }
         });
-
+        //Считывание данных о пользователе и проверка на intro
         async function fetchData() {
             const user = await bridge.send('VKWebAppGetUserInfo');
             const storageData = await bridge.send('VKWebAppStorageGet', {
@@ -188,22 +181,7 @@ const App = () => {
     const goPanelRests = (panel) => {
         setActivePanelRests(panel);
     };
-
-    const goPanelFood = (panel) => {
-        setActivePanelRests(panel);
-    };
-
-    const goPanelBasket = (panel) => {
-        setActivePanelRests(panel);
-    };
-
-    const goPanelOffers = (panel) => {
-        setActivePanelRests(panel);
-    };
-
-    const goPanelOrders = (panel) => {
-        setActivePanelOrders(panel)
-    }
+    //просмотр интро
     const viewIntro = async () => {
         try {
             await bridge.send('VKWebAppStorageSet', {
@@ -303,6 +281,7 @@ const App = () => {
         }
     };
 
+    //вывод списка ресторанов
     function printRests(rests, go) {
         let ans = []
         for (let prop in rests) {
@@ -318,28 +297,27 @@ const App = () => {
     ниже в функции при action = 0 - начальный запуск, когда попадаем на страницу ресторана
                        action = 1 - запуск по нажатию кнопки +
                        action = -1 - запуск по нажатию кнопки -
-
      */
 
-
+    //изменение количества продуктов в корзине
     function changeAmount(prod_id, action, organisation, price) {
         let totCell = document.getElementById(prod_id)
         let iTotCell = document.getElementById(prod_id + 'InBasket')
         let priceCell = document.getElementById('finalCost')
         let labelCell = document.getElementById('basketLabel')
-        console.log('step1')
+        //console.log('step1')
         if (!BASKET.hasOwnProperty(prod_id)) {
-            console.log('newOne')
+            //console.log('newOne')
             BASKET[prod_id] = 0
         }
         if (action === 1) {
             if ((organisation === currentOrganisationChoice) || (currentOrganisationChoice === '')) {
                 currentOrganisationChoice = organisation
-                console.log(organisation)
-                console.log('plus')
+                //console.log(organisation)
+                //console.log('plus')
                 BASKET[prod_id] += 1
                 basketCost += price
-                console.log(BASKET)
+                //console.log(BASKET)
                 let newNumber = BASKET[prod_id]
                 let newCost = basketCost
                 if (totCell !== null) {
@@ -370,10 +348,10 @@ const App = () => {
             }
         }
         if ((action === -1) && (BASKET[prod_id] > 0)) {
-            console.log('minus')
+            //console.log('minus')
             BASKET[prod_id] += -1
             basketCost += -price
-            console.log(BASKET)
+            //console.log(BASKET)
             let newNumber = BASKET[prod_id]
             let newCost = basketCost
             if (totCell !== null) {
@@ -400,8 +378,9 @@ const App = () => {
         }
     }
 
+    //вывод списка продуктов
     function printProds(prods) {
-        console.log(BASKET)
+        //console.log(BASKET)
         let ans = []
         for (let prop in prods) {
             if (!BASKET.hasOwnProperty(prop)) {
@@ -427,14 +406,7 @@ const App = () => {
         return ans;
     }
 
-    function getProps(obj) {
-        let answer = Object.keys(obj).reduce(function (ans, item) {
-            let temp = '' + ans + item + ": " + obj[item] + ", ";
-            return temp
-        }, '')
-        return answer.substring(0, answer.length - 2);
-    }
-
+    //создание страниц мазагинов
     function createRestsPanels(rests, go) {
         let res = []
         for (let rest in rests) {
@@ -460,10 +432,9 @@ const App = () => {
         return res
     }
 
-    ///////////////////////////////////////////функции и переменные для работы с корзиной
-
+    //отправка информации о заказе в БД
     function orderSend(basket, time, payWay, cost) {
-        console.log('отправляем данные Володе')
+        //console.log('отправляем данные Володе')
         ordersAmount += 1
         orders[`orderId${ordersAmount}`] = {
             basket: basket,
@@ -476,14 +447,15 @@ const App = () => {
 
     }
 
+    //проверка на корректность оформления заказа
     function orderRequest() {
         orderTime = document.getElementsByTagName('input')[0].value
-        console.log(orderTime)
+        //console.log(orderTime)
         payWay = document.getElementsByTagName('select')[0].value
-        console.log(payWay)
+        //console.log(payWay)
         let basketDiv = document.getElementById('basketDiv')
         if (orderTime === '') {
-            alert('Выберите время доставки!')
+            alert('Выберите время выдачи!')
         } else {
             orderSend(BASKET, orderTime, payWay, basketCost)
             BASKET = []
@@ -493,11 +465,18 @@ const App = () => {
             if (labelCell !== null) {
                 labelCell.textContent = `${getAmountOfFoodInBasket()}`
             }
+            if ("online" === payWay) {
+                bridge.send("VKWebAppOpenPayForm", {
+                    "app_id": 7774821,
+                    "action": "pay-to-user",
+                    "params": {amount: basketCost, description: "Оплата", user_id: 188856689}
+                });
+            }
             basketDiv.textContent = 'Заказ отправлен на обработку. Информацию о нем можно найти во вкладке "Заказы"'
-        }
-        ;
+        };
     }
 
+    //вывод корзины, её стоимости и панели оформления заказа
     function printBasket(prods) {
         let ans = []
         for (let food in BASKET) {
@@ -542,8 +521,6 @@ const App = () => {
                                 name="ordTime"
                                 placeholder="чч:мм"
                             />
-                            {//<Button mode="tertiary" onClick={() => setOrderTime()}>выбрать</Button>
-                            }
                         </FormItem>
                         <FormItem top={'Способ оплаты заказа'}>
                             <select placeholder="не выбран">
@@ -551,8 +528,6 @@ const App = () => {
                                 <option value={'karta'}>картой в ресторане</option>
                                 <option value={'online'}>картой онлайн</option>
                             </select>
-                            {//<Button mode="tertiary" onClick={() => setPayWay()}>выбрать</Button>
-                            }
                         </FormItem>
                     </FormLayout>
                     <Div className='OfferButton'>
@@ -567,15 +542,17 @@ const App = () => {
         ;
     }
 
+    //получение заказов по id пользователя
     function getUsersOrders(userId) {
-        console.log('выдача ордеров юзеру' + userId)
+        //console.log('выдача ордеров юзеру' + userId)
         return (orders)
     }
 
+    //возврат заказа в корзину
     function returnToBasket(orderId, order) {
-        console.log('возвращаем корзину')
+        //console.log('возвращаем корзину')
         BASKET = order.basket
-        console.log(BASKET)
+        //console.log(BASKET)
         currentOrganisationChoice = `${order.organisation}`
         basketCost = order.cost
         let labelCell = document.getElementById('basketLabel')
@@ -583,15 +560,17 @@ const App = () => {
         deleteOrder(orderId, order)
     }
 
+    //удаление заказа из списка заказов
     function deleteOrder(orderId, order) {
-        console.log('отменяем заказ')
+        //console.log('отменяем заказ')
         delete orders[orderId]
         let orderGroup = document.getElementById(orderId)
         orderGroup.textContent = ''
     }
 
+    //отображение статуса заказа
     function printStatus(orderId, order) {
-        console.log(orderId, order)
+        //console.log(orderId, order)
         if (order.status === 'обрабатывается') {
             return (
                 <Div>Статус заказа: <font color={'orange'}>находится в обработке...</font></Div>
@@ -619,9 +598,10 @@ const App = () => {
         }
     }
 
+    //печать списка заказов
     function printOrders(userId) {
         let ans = []
-        console.log(userId)
+        //console.log(userId)
         let orders = getUsersOrders(userId)
         if (Object.keys(orders).length > 0) {
             for (let order in orders) {
@@ -631,7 +611,7 @@ const App = () => {
                         prodList = prodList + getProductById(prod) + ' (' + orders[order].basket[prod] + 'шт); '
                     }
                 }
-                console.log(prodList);
+                //console.log(prodList);
                 ans.push(
                     <Group id={order}>
                         <Header size={'l'}>Заказ номер: {order}</Header>
@@ -713,9 +693,7 @@ const App = () => {
         return acc;
     }
 
-
-    ////////////////////////////////////////Заказы
-
+    //получение списка ресторанов, в которых работает пользователь
     function getAvailableOrganisation(person) {
         let chelId = 0
         let k = 0
@@ -724,7 +702,7 @@ const App = () => {
         }
         if (k < 1000) {
             chelId = person.id
-            console.log(chelId)
+            //console.log(chelId)
         }
         let helpReturn = {}
         if ((chelId === 365257180) || (chelId === 68043104)) {
@@ -737,12 +715,13 @@ const App = () => {
         return (helpReturn)
     }
 
+    //печать кнопки четвертой панели(для продавцов only)
     function printOffersButton() {
         if (!getAvailableOrganisation(fetchedUser).hasOwnProperty('personId')) {
-            console.log('вы не админ!')
+            //console.log('вы не админ!')
             return (<></>);
         } else {
-            console.log('вы админ!')
+            //console.log('вы админ!')
             return (<TabbarItem
                 onClick={onStoryChange}
                 selected={activeStory === 'offers'}
@@ -773,12 +752,13 @@ const App = () => {
         }
     }
 
+    //печать заказов у организаций
     function getOrganisationOrders(organisationId) {
         let orgOrders = {}
         for (let order in orders) {
             if (orders[order].organisation === organisationId) {
                 orgOrders[order] = orders[order]
-                console.log('найден заказ в вашей организации')
+                //console.log('найден заказ в вашей организации')
             }
         }
         return orgOrders
@@ -811,12 +791,13 @@ const App = () => {
         }
     }
 
+    //печать заказов в организациях
     function printOffers(organisationId) {
         let ans = []
         let orders = getOrganisationOrders(organisationId)
         if (Object.keys(orders).length > 0) {
-            console.log('что-то есть')
-            console.log(orders)
+            //console.log('что-то есть')
+            //console.log(orders)
             for (let order in orders) {
                 let prodList = ' '
                 for (let prod in orders[order].basket) {
@@ -824,7 +805,7 @@ const App = () => {
                         prodList = prodList + getProductById(prod) + ' (' + orders[order].basket[prod] + 'шт); '
                     }
                 }
-                console.log(prodList);
+                //console.log(prodList);
                 ans.push(
                     <Group id={order}>
                         <Header size={'l'}>Заказ номер: {order}</Header>
@@ -848,7 +829,7 @@ const App = () => {
                 )
             }
         } else {
-            console.log('ничего нет')
+            //console.log('ничего нет')
             return (
                 <Group>
                     <Placeholder icon={<Icon28ThumbsUpOutline width={56} height={56}/>}>
@@ -858,7 +839,7 @@ const App = () => {
             )
         }
         ;
-        console.log('под конец')
+        //console.log('под конец')
         return ans;
     }
 
@@ -910,7 +891,7 @@ const App = () => {
             const platform = usePlatform();
             const isDesktop = viewWidth >= ViewWidth.TABLET;
             const hasHeader = platform !== VKCOM;
-            console.log(isDesktop)
+            //console.log(isDesktop)
             return (
                 <AppRoot>
                     <SplitLayout
@@ -1057,16 +1038,6 @@ const App = () => {
         }
     );
 
-
-    /*
-        <View activePanelRests={activePanelRests} popout={popout}>
-            <Home id={ROUTES.HOME} fetchedUser={fetchedUser} go={go} snackbarError={snackbar} ROUTES={ROUTES}/>
-            <Intro id={ROUTES.INTRO} fetchedUser={fetchedUser} go={viewIntro} snackbarError={snackbar}
-                   userHasSeenIntro={userHasSeenIntro}/>
-            <Rests id={ROUTES.RESTS} fetchedUser={fetchedUser} go={go} ROUTES={ROUTES}/>
-            {generateRestsPanels()}
-        </View>
-    */
     return (
         <ConfigProvider>
             <AdaptivityProvider>
