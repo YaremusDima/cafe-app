@@ -51,7 +51,6 @@ import boltay from './img/boltay.jpg'
 import nk from './img/nk.jpg'
 import fsh from './img/fsh.jpg'
 import Button from "@vkontakte/vkui/dist/components/Button/Button";
-//import {object} from "prop-types";
 
 const ROUTES = {
     RESTS: 'rests',
@@ -79,7 +78,7 @@ var currentOrganisationChoice = ''
 var basketCost = 0
 var orderTime
 var payWay = 'nal'
-var ordersAmount = 2
+var ordersAmount = 0
 var orders = {}
 /* orderId1: {
      basket: {
@@ -149,8 +148,8 @@ const App = () => {
                         default:
                             break;
                     }
-                    setActiveStory(ROUTES.INTRO)
-                    setUserHasSeenIntro(false)
+                    //setActiveStory(ROUTES.INTRO)
+                    //setUserHasSeenIntro(false)
                 } catch (error) {
                     setSnackbar(<Snackbar
                             layout='vertical'
@@ -483,7 +482,7 @@ const App = () => {
         console.log(payWay)
         let basketDiv = document.getElementById('basketDiv')
         if (orderTime === '') {
-            alert('Выберите время доставки!')
+            alert('Выберите время выдачи!')
         } else {
             orderSend(BASKET, orderTime, payWay, basketCost)
             BASKET = []
